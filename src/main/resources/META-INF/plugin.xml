@@ -11,6 +11,10 @@
         <!-- Add your extensions here -->
     </extensions>
 
+    <description>
+        工具集目前仅支持websocket客户端通讯
+    </description>
+
     <actions>
         <!-- Add your actions here -->
     </actions>
