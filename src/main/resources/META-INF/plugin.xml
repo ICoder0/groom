@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>com.icoder0.groom</id>
+    <name>Groom</name>
+    <vendor email="bofa1exx@gmail.com" url="">Icoder</vendor>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Groom" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="com.icoder0.groom.GroomToolWindowFactory"/>
+    </extensions>
+</idea-plugin>
