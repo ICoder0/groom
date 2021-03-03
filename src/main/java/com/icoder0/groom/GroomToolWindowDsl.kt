@@ -23,19 +23,18 @@ import com.intellij.util.castSafelyTo
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.tuple.MutablePair
 import org.apache.commons.lang3.tuple.MutableTriple
 import org.apache.commons.lang3.tuple.Triple
-import sun.plugin2.message.Message
-import java.awt.event.*
-import java.beans.PropertyChangeEvent
+import java.awt.Dimension
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.swing.*
 import javax.swing.SwingConstants.TOP
-import javax.swing.event.ChangeEvent
 import javax.swing.table.TableRowSorter
-import kotlin.Comparator
 
 /**
  * @author bofa1ex
@@ -45,7 +44,6 @@ class GroomToolWindowDsl(var project: Project) {
 
     lateinit var websocketArchetypeClient: WebsocketArchetypeClient
 
-    var assistTextField : JBTextField = JBTextField().apply { isVisible = false }
     /* 启动websocket按钮 */
     private var connectButton: JButton = JButton(AllIcons.Actions.Execute).apply {
         this.addActionListener {
@@ -86,7 +84,7 @@ class GroomToolWindowDsl(var project: Project) {
 
     /* 提交websocket request按钮 */
     private var commitButton: JButton = JButton(AllIcons.Actions.Commit).apply {
-        this.addActionListener{
+        this.addActionListener {
             kotlin.run {
                 val text = wsRequestEditor.document.text
                 if (StringUtils.isBlank(text)) {
@@ -114,11 +112,7 @@ class GroomToolWindowDsl(var project: Project) {
             kotlin.run {
                 wsPayloadTableView.rowSorter.castSafelyTo<TableRowSorter<ListTableModel<Triple<String, Int, LocalDateTime>>>>()!!.rowFilter = object : RowFilter<ListTableModel<Triple<String, Int, LocalDateTime>>, Int>() {
                     override fun include(entry: Entry<out ListTableModel<Triple<String, Int, LocalDateTime>>, out Int>): Boolean {
-                        if (selectedIndex == 0){
-                            return true
-                        }
-                        val triple = entry.getValue(0) as Triple<*, *, *>
-                        return triple.middle == if (selectedIndex == 1) 0 else 1
+                        return typeComboBoxInclude(entry) && searchTextFieldInclude(entry)
                     }
                 }
             }
@@ -138,7 +132,7 @@ class GroomToolWindowDsl(var project: Project) {
 
     /* 搜索websocket payload按钮 */
     private var wsPayloadSearchButton: JButton = JButton(AllIcons.Actions.Search).apply {
-        this.addActionListener{
+        this.addActionListener {
             run {
                 fireFilterTableViewCallback()
             }
@@ -150,7 +144,7 @@ class GroomToolWindowDsl(var project: Project) {
     /* websocket request 编辑器 */
     private var wsRequestEditor: Editor = EditorFactory.getInstance().createEditor(wsRequestDocument, project, JsonFileType.INSTANCE, false).apply {
         this.settings.apply {
-            additionalLinesCount = 53
+            additionalLinesCount = 45
             additionalColumnsCount = 0
             isCaretRowShown = false
             isRightMarginShown = false
@@ -158,16 +152,22 @@ class GroomToolWindowDsl(var project: Project) {
             isLineMarkerAreaShown = false
         }
     }
+
+    private var wsRequestEditorPanel: JComponent = wsRequestEditor.component
+
     private var typeColumnInfo: TypeColumnInfo = TypeColumnInfo("Type")
     private var dataColumnInfo: DataColumnInfo = DataColumnInfo("Data")
-    private var lengthColumnInfo: LengthColumnInfo = LengthColumnInfo("Length")
     private var timeColumnInfo: TimeColumnInfo = TimeColumnInfo("Time")
 
-    /* websocket payload tableview */
+    /**
+     * websocket payload tableview
+     * @param string 文本内容
+     * @param int   0:inbound,1:outbound
+     * @param localDateTime 日期
+     */
     private var wsPayloadTableView: TableView<Triple<String, Int, LocalDateTime>> = TableView(ListTableModel<Triple<String, Int, LocalDateTime>>(
             typeColumnInfo,
             dataColumnInfo,
-            lengthColumnInfo,
             timeColumnInfo
     ))
 
@@ -176,27 +176,47 @@ class GroomToolWindowDsl(var project: Project) {
         mainPane.addTab("wsClient", panel {
             titledRow("Control Viewport") {}
             fullRow {
-                component(connectButton)
-                component(disconnectButton).enabled(false)
-                component(wsAddressTextField).constraints(growX).focused()
+                connectButton()
+                disconnectButton().enabled(false)
+                wsAddressTextField(growX).focused()
             }
             fullRow {
-                component(commitButton).enabled(false)
-                component(showButton).enabled(false)
-                component(typeComboBox)
-                component(wsPayloadSearchTextField).constraints(growX)
-                component(wsPayloadSearchButton)
+                commitButton().enabled(false)
+                showButton().enabled(false)
+                typeComboBox()
+                wsPayloadSearchTextField(growX)
+                wsPayloadSearchButton()
             }
             titledRow("Payload Viewport") {}
             fullRow {
-                /* 编辑 websocket request */
-                component(wsRequestEditor.component).constraints(grow)
-                /* 显示websocket payload视图 */
-                component(decoratorTableView(wsPayloadTableView)).constraints(grow)
+                decoratorTableView(wsPayloadTableView)(grow)
+            }
+            fullRow {
+                wsRequestEditorPanel(grow)
             }
         })
         mainPane.addTab("reverse", panel {})
         return mainPane
+    }
+
+    fun typeComboBoxInclude(entry: RowFilter.Entry<out ListTableModel<Triple<String, Int, LocalDateTime>>, out Int>): Boolean {
+        if (typeComboBox.selectedIndex == 0) {
+            return true
+        }
+        val triple = entry.getValue(0) as Triple<*, *, *>
+        return triple.middle == if (typeComboBox.selectedIndex == 1) 0 else 1
+    }
+
+    fun searchTextFieldInclude(entry: RowFilter.Entry<out ListTableModel<Triple<String, Int, LocalDateTime>>, out Int>): Boolean {
+        val text = wsPayloadSearchTextField.text
+        if (StringUtils.isBlank(text)) {
+            return true
+        }
+        val triple = entry.getValue(0) as Triple<*, *, *>
+        val payload = (triple.left as String).trim()
+                .replace("\n", "")
+                .replace("\t", "")
+        return payload.startsWith(text) || payload.endsWith(text) || payload.matches(Regex(text))
     }
 
     fun fireConnectCallback() {
@@ -224,12 +244,7 @@ class GroomToolWindowDsl(var project: Project) {
         val text = wsPayloadSearchTextField.text
         wsPayloadTableView.rowSorter.castSafelyTo<TableRowSorter<ListTableModel<Triple<String, Int, LocalDateTime>>>>()!!.rowFilter = object : RowFilter<ListTableModel<Triple<String, Int, LocalDateTime>>, Int>() {
             override fun include(entry: Entry<out ListTableModel<Triple<String, Int, LocalDateTime>>, out Int>): Boolean {
-                if (StringUtils.isBlank(text)) {
-                    return true
-                }
-                val triple = entry.getValue(0) as Triple<*, *, *>
-                val payload = triple.left as String
-                return payload.startsWith(text) || payload.endsWith(text) || payload.matches(Regex(text))
+                return typeComboBoxInclude(entry) && searchTextFieldInclude(entry)
             }
         }
     }
@@ -243,13 +258,12 @@ class GroomToolWindowDsl(var project: Project) {
             tableView.listTableModel.addRow(MutableTriple.of(inputPair.first, if (inputPair.second) 0 else 1, LocalDateTime.now()))
         }.setRemoveAction { t: AnActionButton? ->
             tableView.listTableModel.removeRow(tableView.selectedRow)
-        }.createPanel()
+        }.setMinimumSize(Dimension(tableView.width, 300)).disableUpDownActions().createPanel()
     }
 
     class TimeColumnInfo(name: String?) : ColumnInfo<Triple<String?, Int?, LocalDateTime?>, String>(name) {
-
-        override fun getWidth(table: JTable?): Int {
-            return 200
+        override fun getWidth(table: JTable): Int {
+            return table.getFontMetrics(table.font).stringWidth(" 00:00:00 ")
         }
 
         override fun getComparator(): Comparator<Triple<String?, Int?, LocalDateTime?>> {
@@ -263,36 +277,19 @@ class GroomToolWindowDsl(var project: Project) {
         }
 
         override fun valueOf(o: Triple<String?, Int?, LocalDateTime?>): String {
-            return o.right!!.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        }
-    }
-
-    class LengthColumnInfo(name: String?) : ColumnInfo<Triple<String?, Int?, LocalDateTime?>, Int>(name) {
-        override fun getWidth(table: JTable?): Int {
-            return 80
-        }
-
-        override fun getComparator(): Comparator<Triple<String?, Int?, LocalDateTime?>> {
-            return Comparator.comparingInt { obj: Triple<String?, Int?, LocalDateTime?> -> obj.left!!.length }
-        }
-
-        override fun getColumnClass(): Class<*> {
-            return Int::class.java
-        }
-
-        override fun valueOf(o: Triple<String?, Int?, LocalDateTime?>): Int {
-            return o.left!!.length
+            return o.right!!.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
         }
     }
 
     class DataColumnInfo(name: String?) : ColumnInfo<MutableTriple<String?, Int?, LocalDateTime?>, String>(name) {
-        override fun setValue(item: MutableTriple<String?, Int?, LocalDateTime?>?, value: String?) {
-            item!!.left = value
-            item.right = LocalDateTime.now()
+
+        override fun getColumnClass(): Class<*> {
+            return MutablePair::class.java
         }
 
-        override fun isCellEditable(item: MutableTriple<String?, Int?, LocalDateTime?>?): Boolean {
-            return true
+        override fun setValue(item: MutableTriple<String?, Int?, LocalDateTime?>, value: String?) {
+            item.left = value
+            item.right = LocalDateTime.now()
         }
 
         override fun valueOf(o: MutableTriple<String?, Int?, LocalDateTime?>): String? {
@@ -300,13 +297,15 @@ class GroomToolWindowDsl(var project: Project) {
         }
     }
 
+
     class TypeColumnInfo(name: String?) : ColumnInfo<Triple<String?, Int?, LocalDateTime?>, Icon>(name) {
-        override fun getColumnClass(): Class<*>? {
-            return Icon::class.java
+
+        override fun getWidth(table: JTable): Int {
+            return table.getFontMetrics(table.font).stringWidth(StringUtils.leftPad("0", AllIcons.Ide.OutgoingChangesOn.iconWidth))
         }
 
-        override fun getWidth(table: JTable?): Int {
-            return 60
+        override fun getColumnClass(): Class<*>? {
+            return Icon::class.java
         }
 
         override fun getComparator(): Comparator<Triple<String?, Int?, LocalDateTime?>> {
