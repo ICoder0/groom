@@ -12,7 +12,7 @@
     </extensions>
 
     <description>
-        工具集目前仅支持websocket客户端通讯
+        Toolkit only supported websocket client currently
     </description>
 
     <actions>
