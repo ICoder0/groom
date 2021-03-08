@@ -9,6 +9,8 @@ import com.icoder0.groom.websocket.WebsocketArchetypeClient
 import com.icoder0.groom.websocket.WebsocketConstant
 import com.intellij.icons.AllIcons
 import com.intellij.ide.ui.fullRow
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
@@ -185,7 +187,10 @@ class GroomToolWindowDsl(var project: Project) {
             val oldText: String = wsRequestEditor.document.text
             wsRequestEditorWrapperPanel.remove(wsRequestEditor.component)
             wsRequestEditor = EditorManager.getEditor(this.selectedItem as String)
-            wsRequestEditor.document.setText(oldText)
+            // Make the document change in the context of a write action.
+            WriteCommandAction.runWriteCommandAction(project) { wsRequestEditor.document.replaceString(
+                    0, wsRequestEditor.document.textLength, oldText
+            ) }
             wsRequestEditorWrapperPanel.add(wsRequestEditor.component)
         }
     }
@@ -303,7 +308,9 @@ class GroomToolWindowDsl(var project: Project) {
             tableView.listTableModel.addRow(MutableTriple.of(inputPair.first, if (inputPair.second) 0 else 1, LocalDateTime.now()))
         }.setRemoveAction { t: AnActionButton? ->
             tableView.listTableModel.removeRow(tableView.selectedRow)
-        }.setMinimumSize(Dimension(tableView.width, 300)).disableUpDownActions().createPanel()
+        }.setMinimumSize(Dimension(tableView.width, 300))
+                .disableUpDownActions()
+                .createPanel()
     }
 
     class TimeColumnInfo(name: String?) : ColumnInfo<Triple<String?, Int?, LocalDateTime?>, String>(name) {
