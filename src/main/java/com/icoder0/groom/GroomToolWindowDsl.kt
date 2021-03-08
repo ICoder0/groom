@@ -64,10 +64,10 @@ class GroomToolWindowDsl(var project: Project) {
                             .setHideOnKeyOutside(true)
                             .setHideOnAction(false)
                             .setFillColor(UIUtil.getControlColor())
-                            .setCloseButtonEnabled(true)
-                            .setClickHandler({
-                                connectState = true
-                            }, true)
+//                            .setCloseButtonEnabled(true)
+//                            .setClickHandler({
+//                                connectState = true
+//                            }, true)
                             .createBalloon()
                     connectPopup.showInCenterOf(this)
                     val connectFuture = CompletableFuture.runAsync {
