@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.icoder0'
-version '1.0.0'
+version '1.0.1'
 
 repositories {
     maven { url 'https://maven.aliyun.com/repository/public' }
@@ -37,3 +37,4 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         jvmTarget = "1.8"
     }
 }
+
