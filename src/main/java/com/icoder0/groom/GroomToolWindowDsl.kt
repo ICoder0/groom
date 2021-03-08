@@ -334,7 +334,7 @@ class GroomToolWindowDsl(var project: Project) {
 
     inner class DataColumnInfo(name: String?) : ColumnInfo<MutableTriple<String?, Int?, LocalDateTime?>, String>(name) {
 
-        val editor = EditorExTableCellEditor()
+        val editor = EditorExTableCellEditor(project)
 
         val renderer = TextFieldTableCellRenderer()
 
@@ -360,7 +360,6 @@ class GroomToolWindowDsl(var project: Project) {
 
         override fun setValue(item: MutableTriple<String?, Int?, LocalDateTime?>, value: String?) {
             item.left = value
-            item.right = LocalDateTime.now()
         }
 
         override fun valueOf(o: MutableTriple<String?, Int?, LocalDateTime?>): String? {
