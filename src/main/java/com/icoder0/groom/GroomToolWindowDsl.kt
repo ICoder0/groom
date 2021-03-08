@@ -9,7 +9,6 @@ import com.icoder0.groom.websocket.WebsocketArchetypeClient
 import com.icoder0.groom.websocket.WebsocketConstant
 import com.intellij.icons.AllIcons
 import com.intellij.ide.ui.fullRow
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
@@ -38,6 +37,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import javax.swing.*
 import javax.swing.SwingConstants.TOP
+import javax.swing.event.ChangeEvent
 import javax.swing.table.TableCellEditor
 import javax.swing.table.TableCellRenderer
 import javax.swing.table.TableRowSorter
@@ -209,14 +209,26 @@ class GroomToolWindowDsl(var project: Project) {
      * @param int   0:inbound,1:outbound
      * @param localDateTime 日期
      */
-    private var wsPayloadTableView = TableView<Triple<String, Int, LocalDateTime>>(ListTableModel(
+    private var wsPayloadTableView = object : TableView<Triple<String, Int, LocalDateTime>>(ListTableModel(
             typeColumnInfo,
             dataColumnInfo,
             timeColumnInfo
-    )).apply {
+    )){
+        override fun columnMarginChanged(e: ChangeEvent?) {
+            val resizingColumn = if (tableHeader == null) null else tableHeader.resizingColumn
+            // Need to do this here, before the parent's
+            // layout manager calls getPreferredSize().
+            // Need to do this here, before the parent's
+            // layout manager calls getPreferredSize().
+            if (resizingColumn != null && autoResizeMode == JTable.AUTO_RESIZE_OFF) {
+                resizingColumn.preferredWidth = resizingColumn.width
+            }
+            resizeAndRepaint()
+        }
+    }.apply {
+        fillsViewportHeight = true
         rowSorter.sortKeys = arrayListOf()
     }
-
 
     fun getMainPanel(): JComponent {
         val mainPane = TabbedPaneImpl(TOP)
