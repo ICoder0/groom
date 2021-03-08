@@ -1,19 +1,19 @@
 package com.icoder0.groom
 
+import com.icoder0.groom.renderer.EditorExTableCellEditor
+import com.icoder0.groom.component.EditorManager
+import com.icoder0.groom.renderer.IconRendererEx
+import com.icoder0.groom.renderer.ObjectRendererEx
+import com.icoder0.groom.renderer.TextFieldTableCellRenderer
 import com.icoder0.groom.websocket.WebsocketArchetypeClient
 import com.icoder0.groom.websocket.WebsocketConstant
 import com.intellij.icons.AllIcons
 import com.intellij.ide.ui.fullRow
-import com.intellij.json.JsonFileType
-import com.intellij.json.JsonLanguage
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.popup.*
 import com.intellij.ui.AnActionButton
-import com.intellij.ui.LanguageTextField.SimpleDocumentCreator
 import com.intellij.ui.TabbedPaneImpl
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBTextField
@@ -22,18 +22,22 @@ import com.intellij.ui.table.TableView
 import com.intellij.util.castSafelyTo
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
+import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.components.BorderLayoutPanel
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.tuple.MutablePair
 import org.apache.commons.lang3.tuple.MutableTriple
 import org.apache.commons.lang3.tuple.Triple
 import java.awt.Dimension
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
+import java.awt.event.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import javax.swing.*
 import javax.swing.SwingConstants.TOP
+import javax.swing.table.TableCellEditor
+import javax.swing.table.TableCellRenderer
 import javax.swing.table.TableRowSorter
 
 /**
@@ -44,28 +48,62 @@ class GroomToolWindowDsl(var project: Project) {
 
     lateinit var websocketArchetypeClient: WebsocketArchetypeClient
 
+    private var connectProgressBar = JProgressBar(0, 0, 10)
+
     /* 启动websocket按钮 */
-    private var connectButton: JButton = JButton(AllIcons.Actions.Execute).apply {
+    private var connectButton = JButton(AllIcons.Actions.Execute).apply {
         this.addActionListener {
             kotlin.run {
                 websocketArchetypeClient = WebsocketArchetypeClient.start(wsAddressTextField.text, this@GroomToolWindowDsl)!!
+                var connectState = false
                 try {
-                    websocketArchetypeClient.connectBlocking(10, TimeUnit.SECONDS)
-                    if (websocketArchetypeClient.isClosed) {
-                        Messages.showErrorDialog("Websocket连接失败, 请检查连接地址", "Websocket异常")
+                    val connectPopup = JBPopupFactory.getInstance().createBalloonBuilder(connectProgressBar)
+                            .setTitle("正在连接Websocket")
+                            .setAnimationCycle(0)
+                            .setHideOnClickOutside(true)
+                            .setHideOnKeyOutside(true)
+                            .setHideOnAction(false)
+                            .setFillColor(UIUtil.getControlColor())
+                            .setCloseButtonEnabled(true)
+                            .setClickHandler({
+                                connectState = true
+                            }, true)
+                            .createBalloon()
+                    connectPopup.showInCenterOf(this)
+                    val connectFuture = CompletableFuture.runAsync {
+                        connectProgressBar.value = connectProgressBar.minimum
+                        while (connectProgressBar.value < 10) {
+                            if (connectState) {
+                                break
+                            }
+                            connectProgressBar.value++
+                            TimeUnit.SECONDS.sleep(1)
+                        }
+                        if (websocketArchetypeClient.isOpen) {
+                            connectProgressBar.value = connectProgressBar.maximum
+                            fireConnectCallback()
+                        }
+                        TimeUnit.MILLISECONDS.sleep(100)
+                        connectPopup.hide()
+                    }
+                    if (!websocketArchetypeClient.connectBlocking(10, TimeUnit.SECONDS)) {
+                        connectFuture.cancel(true)
+                        Messages.showErrorDialog("Websocket连接失败, 请尝试重新连接", "Websocket异常")
                         return@run
                     }
+
                 } catch (e: InterruptedException) {
                     Messages.showErrorDialog("Websocket连接失败, 请尝试重新连接", "Websocket异常")
                     return@run
+                } finally {
+                    connectState = true
                 }
-                fireConnectCallback()
             }
         }
     }
 
     /* 关闭websocket按钮 */
-    private var disconnectButton: JButton = JButton(AllIcons.Actions.Suspend).apply {
+    private var disconnectButton = JButton(AllIcons.Actions.Suspend).apply {
         this.addActionListener {
             kotlin.run {
                 try {
@@ -80,10 +118,10 @@ class GroomToolWindowDsl(var project: Project) {
     }
 
     /* websocket#address文本框 */
-    private var wsAddressTextField: JBTextField = JBTextField("wss://socket.idcd.com:1443").apply { toolTipText = "wss://{ip}:{port}/" }
+    private var wsAddressTextField = JBTextField("wss://socket.idcd.com:1443").apply { toolTipText = "wss://{ip}:{port}/" }
 
     /* 提交websocket request按钮 */
-    private var commitButton: JButton = JButton(AllIcons.Actions.Commit).apply {
+    private var commitButton = JButton(AllIcons.Actions.Commit).apply {
         this.addActionListener {
             kotlin.run {
                 val text = wsRequestEditor.document.text
@@ -99,15 +137,15 @@ class GroomToolWindowDsl(var project: Project) {
                 messageCallback(WebsocketConstant.outboundType, text)
             }
         }
-    }
+    }.apply { isEnabled = false }
 
     /* 查看websocket request 历史记录按钮 */
-    private var showButton: JButton = JButton(AllIcons.Actions.Show).apply {
+    private var showButton = JButton(AllIcons.Actions.Show).apply {
         toolTipText = "暂不支持请求报文历史记录功能, 请关注后续版本变更."
-    }
+    }.apply { isEnabled = false }
 
     /* 筛选websocket payload类型ComboBox */
-    private var typeComboBox: ComboBox<String> = ComboBox(arrayOf("All", "In", "Out")).apply {
+    private var typeComboBox = ComboBox(arrayOf("All", "In", "Out")).apply {
         this.addActionListener {
             kotlin.run {
                 wsPayloadTableView.rowSorter.castSafelyTo<TableRowSorter<ListTableModel<Triple<String, Int, LocalDateTime>>>>()!!.rowFilter = object : RowFilter<ListTableModel<Triple<String, Int, LocalDateTime>>, Int>() {
@@ -120,7 +158,7 @@ class GroomToolWindowDsl(var project: Project) {
     }
 
     /* 筛选websocket payload文本框 */
-    private var wsPayloadSearchTextField: JBTextField = JBTextField().apply {
+    private var wsPayloadSearchTextField = JBTextField().apply {
         addKeyListener(object : KeyAdapter() {
             override fun keyTyped(e: KeyEvent) {
                 if (e.keyCode == KeyEvent.VK_ENTER) {
@@ -131,7 +169,7 @@ class GroomToolWindowDsl(var project: Project) {
     }
 
     /* 搜索websocket payload按钮 */
-    private var wsPayloadSearchButton: JButton = JButton(AllIcons.Actions.Search).apply {
+    private var wsPayloadSearchButton = JButton(AllIcons.Actions.Search).apply {
         this.addActionListener {
             run {
                 fireFilterTableViewCallback()
@@ -139,25 +177,26 @@ class GroomToolWindowDsl(var project: Project) {
         }
     }
 
-    private var wsRequestDocument: Document = SimpleDocumentCreator().createDocument("", JsonLanguage.INSTANCE, project)
-
     /* websocket request 编辑器 */
-    private var wsRequestEditor: Editor = EditorFactory.getInstance().createEditor(wsRequestDocument, project, JsonFileType.INSTANCE, false).apply {
-        this.settings.apply {
-            additionalLinesCount = 45
-            additionalColumnsCount = 0
-            isCaretRowShown = false
-            isRightMarginShown = false
-            isAdditionalPageAtBottom = false
-            isLineMarkerAreaShown = false
+    private var wsRequestEditor = EditorManager.getEditor("json")
+
+    private var languageComboBox = ComboBox(arrayOf("json", "xml", "html", "java", "plainText")).apply {
+        this.addActionListener {
+            val oldText: String = wsRequestEditor.document.text
+            wsRequestEditorWrapperPanel.remove(wsRequestEditor.component)
+            wsRequestEditor = EditorManager.getEditor(this.selectedItem as String)
+            wsRequestEditor.document.setText(oldText)
+            wsRequestEditorWrapperPanel.add(wsRequestEditor.component)
         }
     }
 
-    private var wsRequestEditorPanel: JComponent = wsRequestEditor.component
+    private var wsRequestEditorWrapperPanel = BorderLayoutPanel().apply {
+        addToCenter(wsRequestEditor.component)
+    }
 
-    private var typeColumnInfo: TypeColumnInfo = TypeColumnInfo("Type")
-    private var dataColumnInfo: DataColumnInfo = DataColumnInfo("Data")
-    private var timeColumnInfo: TimeColumnInfo = TimeColumnInfo("Time")
+    private var dataColumnInfo = DataColumnInfo("Data")
+    private var typeColumnInfo = TypeColumnInfo("Type")
+    private var timeColumnInfo = TimeColumnInfo("Time")
 
     /**
      * websocket payload tableview
@@ -165,11 +204,14 @@ class GroomToolWindowDsl(var project: Project) {
      * @param int   0:inbound,1:outbound
      * @param localDateTime 日期
      */
-    private var wsPayloadTableView: TableView<Triple<String, Int, LocalDateTime>> = TableView(ListTableModel<Triple<String, Int, LocalDateTime>>(
+    private var wsPayloadTableView = TableView<Triple<String, Int, LocalDateTime>>(ListTableModel(
             typeColumnInfo,
             dataColumnInfo,
             timeColumnInfo
-    ))
+    )).apply {
+        rowSorter.sortKeys = arrayListOf()
+    }
+
 
     fun getMainPanel(): JComponent {
         val mainPane = TabbedPaneImpl(TOP)
@@ -181,8 +223,6 @@ class GroomToolWindowDsl(var project: Project) {
                 wsAddressTextField(growX).focused()
             }
             fullRow {
-                commitButton().enabled(false)
-                showButton().enabled(false)
                 typeComboBox()
                 wsPayloadSearchTextField(growX)
                 wsPayloadSearchButton()
@@ -192,7 +232,12 @@ class GroomToolWindowDsl(var project: Project) {
                 decoratorTableView(wsPayloadTableView)(grow)
             }
             fullRow {
-                wsRequestEditorPanel(grow)
+                wsRequestEditorWrapperPanel(grow)
+            }
+            row {
+                right {
+                    BorderLayoutPanel().addToRight(commitButton).addToCenter(languageComboBox)()
+                }
             }
         })
         mainPane.addTab("reverse", panel {})
@@ -225,6 +270,7 @@ class GroomToolWindowDsl(var project: Project) {
         disconnectButton.isEnabled = true
         wsAddressTextField.isEditable = false
         wsPayloadTableView.listTableModel.items = mutableListOf()
+        dataColumnInfo.reset()
     }
 
     fun fireDisconnectCallback() {
@@ -241,7 +287,6 @@ class GroomToolWindowDsl(var project: Project) {
     }
 
     fun fireFilterTableViewCallback(): Unit {
-        val text = wsPayloadSearchTextField.text
         wsPayloadTableView.rowSorter.castSafelyTo<TableRowSorter<ListTableModel<Triple<String, Int, LocalDateTime>>>>()!!.rowFilter = object : RowFilter<ListTableModel<Triple<String, Int, LocalDateTime>>, Int>() {
             override fun include(entry: Entry<out ListTableModel<Triple<String, Int, LocalDateTime>>, out Int>): Boolean {
                 return typeComboBoxInclude(entry) && searchTextFieldInclude(entry)
@@ -262,6 +307,8 @@ class GroomToolWindowDsl(var project: Project) {
     }
 
     class TimeColumnInfo(name: String?) : ColumnInfo<Triple<String?, Int?, LocalDateTime?>, String>(name) {
+        val renderer = ObjectRendererEx()
+
         override fun getWidth(table: JTable): Int {
             return table.getFontMetrics(table.font).stringWidth(" 00:00:00 ")
         }
@@ -270,6 +317,10 @@ class GroomToolWindowDsl(var project: Project) {
             return Comparator { lt: Triple<String?, Int?, LocalDateTime?>, rt: Triple<String?, Int?, LocalDateTime?> ->
                 lt.right!!.compareTo(rt.right)
             }
+        }
+
+        override fun getRenderer(item: Triple<String?, Int?, LocalDateTime?>?): TableCellRenderer? {
+            return renderer
         }
 
         override fun getColumnClass(): Class<*> {
@@ -281,7 +332,27 @@ class GroomToolWindowDsl(var project: Project) {
         }
     }
 
-    class DataColumnInfo(name: String?) : ColumnInfo<MutableTriple<String?, Int?, LocalDateTime?>, String>(name) {
+    inner class DataColumnInfo(name: String?) : ColumnInfo<MutableTriple<String?, Int?, LocalDateTime?>, String>(name) {
+
+        val editor = EditorExTableCellEditor()
+
+        val renderer = TextFieldTableCellRenderer()
+
+        fun reset() {
+            renderer.reset()
+        }
+
+        override fun getEditor(item: MutableTriple<String?, Int?, LocalDateTime?>?): TableCellEditor? {
+            return editor
+        }
+
+        override fun isCellEditable(item: MutableTriple<String?, Int?, LocalDateTime?>?): Boolean {
+            return true
+        }
+
+        override fun getRenderer(item: MutableTriple<String?, Int?, LocalDateTime?>?): TableCellRenderer? {
+            return renderer
+        }
 
         override fun getColumnClass(): Class<*> {
             return MutablePair::class.java
@@ -300,12 +371,18 @@ class GroomToolWindowDsl(var project: Project) {
 
     class TypeColumnInfo(name: String?) : ColumnInfo<Triple<String?, Int?, LocalDateTime?>, Icon>(name) {
 
+        val renderer = IconRendererEx()
+
         override fun getWidth(table: JTable): Int {
-            return table.getFontMetrics(table.font).stringWidth(StringUtils.leftPad("0", AllIcons.Ide.OutgoingChangesOn.iconWidth))
+            return table.getFontMetrics(table.font).stringWidth(" 00:00:00 ")
         }
 
         override fun getColumnClass(): Class<*>? {
             return Icon::class.java
+        }
+
+        override fun getRenderer(item: Triple<String?, Int?, LocalDateTime?>?): TableCellRenderer? {
+            return renderer
         }
 
         override fun getComparator(): Comparator<Triple<String?, Int?, LocalDateTime?>> {
