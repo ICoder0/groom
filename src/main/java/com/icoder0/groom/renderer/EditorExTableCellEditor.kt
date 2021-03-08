@@ -1,6 +1,9 @@
 package com.icoder0.groom.renderer
 
+import com.icoder0.groom.component.EditorManager
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.project.Project
 import com.intellij.util.ui.AbstractTableCellEditor
 import java.awt.Component
 import java.awt.event.MouseEvent
@@ -11,7 +14,7 @@ import javax.swing.JTable
  * @author bofa1ex
  * @since 2021/3/5
  */
-class EditorExTableCellEditor : AbstractTableCellEditor() {
+class EditorExTableCellEditor(private var project: Project) : AbstractTableCellEditor() {
     private val editor = EditorFactory.getInstance().createEditor(EditorFactory.getInstance().createDocument(""))
     private val editorOriginalCellHeight: Int
 
@@ -20,7 +23,10 @@ class EditorExTableCellEditor : AbstractTableCellEditor() {
     }
 
     override fun getTableCellEditorComponent(table: JTable, value: Any, isSelected: Boolean, row: Int, column: Int): Component {
-        editor.document.setText(value.toString())
+        // Make the document change in the context of a write action.
+        WriteCommandAction.runWriteCommandAction(project) { editor.document.replaceString(
+                0, editor.document.textLength, value.toString()
+        ) }
         if (isSelected) {
             table.setRowHeight(row, 10 * editorOriginalCellHeight)
         }
@@ -32,7 +38,6 @@ class EditorExTableCellEditor : AbstractTableCellEditor() {
     }
 
     init {
-        editor.settings.additionalLinesCount = 3
         editor.settings.additionalColumnsCount = 0
         editor.settings.isLineMarkerAreaShown = false
         editor.settings.isAdditionalPageAtBottom = false
