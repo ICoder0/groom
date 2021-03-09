@@ -8,7 +8,6 @@ import com.icoder0.groom.renderer.TextFieldTableCellRenderer
 import com.icoder0.groom.websocket.WebsocketArchetypeClient
 import com.icoder0.groom.websocket.WebsocketConstant
 import com.intellij.icons.AllIcons
-import com.intellij.ide.ui.fullRow
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
@@ -182,15 +181,17 @@ class GroomToolWindowDsl(var project: Project) {
     /* websocket request 编辑器 */
     private var wsRequestEditor = EditorManager.getEditor("json")
 
-    private var languageComboBox = ComboBox(arrayOf("json", "xml", "html", "java", "plainText")).apply {
+    private var languageComboBox = ComboBox(arrayOf("json", "xml", "html", "plainText")).apply {
         this.addActionListener {
             val oldText: String = wsRequestEditor.document.text
             wsRequestEditorWrapperPanel.remove(wsRequestEditor.component)
             wsRequestEditor = EditorManager.getEditor(this.selectedItem as String)
             // Make the document change in the context of a write action.
-            WriteCommandAction.runWriteCommandAction(project) { wsRequestEditor.document.replaceString(
-                    0, wsRequestEditor.document.textLength, oldText
-            ) }
+            WriteCommandAction.runWriteCommandAction(project) {
+                wsRequestEditor.document.replaceString(
+                        0, wsRequestEditor.document.textLength, oldText
+                )
+            }
             wsRequestEditorWrapperPanel.add(wsRequestEditor.component)
         }
     }
@@ -213,7 +214,7 @@ class GroomToolWindowDsl(var project: Project) {
             typeColumnInfo,
             dataColumnInfo,
             timeColumnInfo
-    )){
+    )) {
         override fun columnMarginChanged(e: ChangeEvent?) {
             val resizingColumn = if (tableHeader == null) null else tableHeader.resizingColumn
             // Need to do this here, before the parent's
@@ -234,22 +235,30 @@ class GroomToolWindowDsl(var project: Project) {
         val mainPane = TabbedPaneImpl(TOP)
         mainPane.addTab("wsClient", panel {
             titledRow("Control Viewport") {}
-            fullRow {
-                connectButton()
-                disconnectButton().enabled(false)
-                wsAddressTextField(growX).focused()
+            row {
+                cell(isFullWidth = true, init = {
+                    connectButton()
+                    disconnectButton().enabled(false)
+                    wsAddressTextField(growX).focused()
+                })
             }
-            fullRow {
-                typeComboBox()
-                wsPayloadSearchTextField(growX)
-                wsPayloadSearchButton()
+            row {
+                cell(isFullWidth = true, init = {
+                    typeComboBox()
+                    wsPayloadSearchTextField(growX)
+                    wsPayloadSearchButton()
+                })
             }
             titledRow("Payload Viewport") {}
-            fullRow {
-                decoratorTableView(wsPayloadTableView)(grow)
+            row {
+                cell(isFullWidth = true ,init = {
+                    decoratorTableView(wsPayloadTableView)(grow)
+                })
             }
-            fullRow {
-                wsRequestEditorWrapperPanel(grow)
+            row {
+                cell(isFullWidth = true, init = {
+                    wsRequestEditorWrapperPanel(grow)
+                })
             }
             row {
                 right {
