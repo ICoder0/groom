@@ -74,17 +74,6 @@ open class EditorManager {
                     isLineMarkerAreaShown = false
                 }
             }
-            editorMap["java"] = editorFactory.createEditor(DEFAULT_CREATOR.createDocument("", Language.findLanguageByID("JAVA"), project), project, Language.findLanguageByID("JAVA")!!.associatedFileType!!, false).apply {
-                this.settings.apply {
-                    setTabSize(4)
-                    additionalLinesCount = 45
-                    additionalColumnsCount = 0
-                    isCaretRowShown = false
-                    isRightMarginShown = false
-                    isAdditionalPageAtBottom = false
-                    isLineMarkerAreaShown = false
-                }
-            }
         }
     }
 }
