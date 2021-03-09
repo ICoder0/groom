@@ -38,3 +38,7 @@ To keep everything working, do not remove `<!-- ... -->` sections.
 Plugin based on the [IntelliJ Platform Plugin Template][template].
 
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template
+
+
+https://user-images.githubusercontent.com/30573693/110410641-2b19f980-80c4-11eb-8258-c61e0edad295.mp4
+
