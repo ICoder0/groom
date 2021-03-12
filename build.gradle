@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.icoder0'
-version '1.0.0'
+version '1.0.1'
 
 repositories {
     maven { url 'https://maven.aliyun.com/repository/public' }
@@ -43,7 +43,8 @@ patchPluginXml {
     }
 
     changeNotes """
-      1.0.0 initial feature with websocket basic interaction
+      1.0.0 initial feature with websocket basic interaction.
+      1.0.1 add panel only display composite language editor.
       """
 }
 
