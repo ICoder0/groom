@@ -22,4 +22,28 @@
                     factoryClass="com.icoder0.groom.GroomToolWindowFactory"/>
     </extensions>
 
+    <actions>
+        <action id="EditorBasics.EditorEscapeAction"
+                class="com.icoder0.groom.action.EditorEscapeAction"
+                text="Escape"
+                description="Escape selected text."
+                icon="/icons/escape.svg">
+            <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>
+        </action>
+        <action id="EditorBasics.EditorCompressAction"
+                class="com.icoder0.groom.action.EditorCompressAction"
+                text="Compress"
+                description="Compress selected text."
+                icon="/icons/compress.svg">
+            <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>
+        </action>
+        <action id="EditorBasics.EditorCompressAndEscapeAction"
+                class="com.icoder0.groom.action.EditorCompressAndEscapeAction"
+                text="Compress and Escape"
+                description="Compress and Escape selected text."
+                icon="/icons/composite.svg">
+            <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>
+        </action>
+    </actions>
+
 </idea-plugin>
