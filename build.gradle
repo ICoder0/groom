@@ -41,10 +41,5 @@ patchPluginXml {
     if (file(description).exists()) {
         pluginDescription(file(description).text)
     }
-
-    changeNotes """
-      1.0.0 initial feature with websocket basic interaction.
-      1.0.1 add panel only display composite language editor.
-      """
 }
 

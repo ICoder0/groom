@@ -46,4 +46,12 @@
         </action>
     </actions>
 
+    <change-notes>
+        <![CDATA[
+      <ul>
+        <li><b>1.0.1</b> add panel only display composite language editor.</li>
+        <li><b>1.0.0</b> initial feature with websocket basic interaction..</li>
+      </ul>
+    ]]>
+    </change-notes>
 </idea-plugin>
