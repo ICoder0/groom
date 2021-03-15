@@ -5,10 +5,6 @@
 
     <depends>com.intellij.modules.platform</depends>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
-    </extensions>
-
     <!--    Leave this in here so the IDE gives you feedback on-->
     <!--    What APIs are available-->
     <idea-version since-build="201.6668.113"/>
@@ -20,6 +16,9 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="Groom" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="com.icoder0.groom.GroomToolWindowFactory"/>
+        <fileType name="Simple File" implementationClass="com.icoder0.groom.language.simple.SimpleFileType"
+                  fieldName="INSTANCE" language="Simple" extensions="simple"/>
+
     </extensions>
 
     <actions>
@@ -27,21 +26,21 @@
                 class="com.icoder0.groom.action.EditorEscapeAction"
                 text="Escape"
                 description="Escape selected text."
-                icon="/icons/escape.svg">
+                icon="EditorActionIcons.Escape">
             <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>
         </action>
         <action id="EditorBasics.EditorCompressAction"
                 class="com.icoder0.groom.action.EditorCompressAction"
                 text="Compress"
                 description="Compress selected text."
-                icon="/icons/compress.svg">
+                icon="EditorActionIcons.Compress">
             <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>
         </action>
         <action id="EditorBasics.EditorCompressAndEscapeAction"
                 class="com.icoder0.groom.action.EditorCompressAndEscapeAction"
                 text="Compress and Escape"
                 description="Compress and Escape selected text."
-                icon="/icons/composite.svg">
+                icon="EditorActionIcons.Composite">
             <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>
         </action>
     </actions>
