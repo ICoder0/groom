@@ -10,7 +10,7 @@
     <idea-version since-build="201.6668.113"/>
 
     <description><![CDATA[
-        Toolkit only supported websocket client currently
+         supported websocket-client/composite-language-editor(escape/compress/etc).
     ]]></description>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -48,6 +48,7 @@
     <change-notes>
         <![CDATA[
       <ul>
+        <li><b>1.0.2</b> add pluginIcon and editor actions such as compress/escape/etc.</li>
         <li><b>1.0.1</b> add panel only display composite language editor.</li>
         <li><b>1.0.0</b> initial feature with websocket basic interaction..</li>
       </ul>
