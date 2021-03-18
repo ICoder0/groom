@@ -97,7 +97,7 @@ class WsPanel(val project: Project) : IPanel {
                 var connectState = false
                 try {
                     val connectPopup = JBPopupFactory.getInstance().createBalloonBuilder(connectProgressBar)
-                            .setTitle("正在连接Websocket")
+                            .setTitle("Connect Websocket Server...")
                             .setAnimationCycle(0)
                             .setHideOnClickOutside(true)
                             .setHideOnKeyOutside(true)
@@ -123,12 +123,12 @@ class WsPanel(val project: Project) : IPanel {
                     }
                     if (!websocketArchetypeClient.connectBlocking(10, TimeUnit.SECONDS)) {
                         connectFuture.cancel(true)
-                        Messages.showErrorDialog("Websocket连接失败, 请尝试重新连接", "Websocket异常")
+                        Messages.showErrorDialog("Websocket Connect Failed, Please try to reconnect it.", "Websocket Connection Error")
                         return@run
                     }
 
                 } catch (e: InterruptedException) {
-                    Messages.showErrorDialog("Websocket连接失败, 请尝试重新连接", "Websocket异常")
+                    Messages.showErrorDialog("Websocket Connect Failed, Please try to reconnect it.", "Websocket Connection Error")
                     return@run
                 } finally {
                     connectState = true
@@ -144,7 +144,7 @@ class WsPanel(val project: Project) : IPanel {
                 try {
                     websocketArchetypeClient.closeBlocking()
                 } catch (e: InterruptedException) {
-                    Messages.showErrorDialog("Websocket关闭连接失败", "Websocket请求异常");
+                    Messages.showErrorDialog("Websocket Close Connection Failed!", "Websocket Close Connection Error")
                     return@run
                 }
                 fireDisconnectCallback()
@@ -161,11 +161,11 @@ class WsPanel(val project: Project) : IPanel {
             kotlin.run {
                 val text = wsRequestEditor.document.text
                 if (StringUtils.isBlank(text)) {
-                    Messages.showErrorDialog("Websocket请求不可为空", "Websocket请求异常");
+                    Messages.showErrorDialog("Websocket request body could not be empty", "Websocket Request Error")
                     return@run
                 }
                 if (!websocketArchetypeClient.isOpen) {
-                    Messages.showWarningDialog("Websocket connect is not open!", "Websocket请求异常");
+                    Messages.showWarningDialog("Websocket connect is not open!", "Websocket Request Error")
                     return@run
                 }
                 websocketArchetypeClient.send(text)
@@ -319,7 +319,7 @@ class WsPanel(val project: Project) : IPanel {
     fun decoratorTableView(tableView: TableView<Triple<String, Int, LocalDateTime>>): JComponent {
         return ToolbarDecorator.createDecorator(tableView).setAddAction { t: AnActionButton? ->
             val inputPair = Messages.showInputDialogWithCheckBox(
-                    "input payload", "Insert Payload Row", "in/out", true,
+                    "input payload", "Insert Payload Row", "In/Out", true,
                     true, AllIcons.Actions.Profile, "", null
             )
             tableView.listTableModel.addRow(MutableTriple.of(inputPair.first, if (inputPair.second) 0 else 1, LocalDateTime.now()))
