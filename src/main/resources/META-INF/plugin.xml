@@ -14,7 +14,7 @@
     ]]></description>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Groom" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+        <toolWindow id="Groom" secondary="true" icon="ToolWindowIcons.Logo" anchor="right"
                     factoryClass="com.icoder0.groom.GroomToolWindowFactory"/>
         <fileType name="Simple File" implementationClass="com.icoder0.groom.language.simple.SimpleFileType"
                   fieldName="INSTANCE" language="Simple" extensions="simple"/>
