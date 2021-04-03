@@ -8,5 +8,5 @@ import com.intellij.openapi.util.IconLoader
  */
 object ToolWindowIcons {
     @JvmField
-    val Logo = IconLoader.getIcon("/icons/pluginIcon.svg", javaClass)
+    val Logo = IconLoader.getIcon("/icons/logo.svg", javaClass)
 }
