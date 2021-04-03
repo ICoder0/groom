@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.Messages
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.layout.PropertyBinding
@@ -13,6 +14,7 @@ import com.intellij.ui.layout.applyToComponent
 import com.intellij.ui.layout.panel
 import com.intellij.ui.layout.withSelectedBinding
 import com.intellij.util.castSafelyTo
+import org.bouncycastle.util.encoders.DecoderException
 import org.bouncycastle.util.encoders.Hex
 import java.nio.charset.Charset
 import java.security.MessageDigest
@@ -47,7 +49,11 @@ class EditorDecodeHexAction : AnAction() {
         var original = document.text
         if (dialog.showAndGet()) {
             val charset = Charset.forName(dialog.getCharset())
-            original = String(Hex.decode(document.text.toByteArray(charset)))
+            try {
+                original = String(Hex.decode(document.text.toByteArray(charset)))
+            } catch (e: DecoderException) {
+                Messages.showErrorDialog(e.message, "Decode Error")
+            }
         }
         WriteCommandAction.runWriteCommandAction(project) {
             document.replaceString(start, end, original)
