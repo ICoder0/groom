@@ -11,7 +11,6 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.layout.*
 import com.intellij.util.castSafelyTo
-import kotlinx.coroutines.selects.select
 import org.codehaus.plexus.util.Base64
 import java.nio.charset.Charset
 import javax.swing.JComponent
@@ -43,22 +42,22 @@ class EditorEncodeBase64Action : AnAction() {
         // Replace the selection with a fixed string.
         // Must do this document change in a write action context.
         val dialog = EncodeBase64Dialog()
-        var original = document.text
+        var replace = editor.selectionModel.selectedText!!
         if (dialog.showAndGet()) {
+            val charset = Charset.forName(dialog.getCharset())
+            replace = String(Base64.encodeBase64(replace.toByteArray(charset)))
             if (dialog.isLf) {
-                original = StringUtil.convertLineSeparators(original, "\n")
+                replace = StringUtil.convertLineSeparators(replace, "\n")
             }
             if (dialog.isCrlf) {
-                original = StringUtil.convertLineSeparators(original, "\r\n")
+                replace = StringUtil.convertLineSeparators(replace, "\r\n")
             }
             if (dialog.isCr) {
-                original = StringUtil.convertLineSeparators(original, "\r")
+                replace = StringUtil.convertLineSeparators(replace, "\r")
             }
         }
-        val charset = Charset.forName(dialog.getCharset())
-        WriteCommandAction.runWriteCommandAction(project
-        ) {
-            document.replaceString(start, end, String(Base64.encodeBase64(original.toByteArray(charset))))
+        WriteCommandAction.runWriteCommandAction(project) {
+            document.replaceString(start, end, replace)
         }
         // De-select the text range that was just replaced
         primaryCaret.removeSelection()

@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.ui.Messages
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.layout.PropertyBinding
@@ -15,11 +15,9 @@ import com.intellij.ui.layout.panel
 import com.intellij.ui.layout.withSelectedBinding
 import com.intellij.util.castSafelyTo
 import org.apache.commons.lang.StringUtils
-import org.bouncycastle.asn1.bsi.BSIObjectIdentifiers.algorithm
+import org.bouncycastle.util.encoders.DecoderException
 import org.bouncycastle.util.encoders.Hex
-import org.codehaus.plexus.util.Base64
 import java.nio.charset.Charset
-import java.security.MessageDigest
 import javax.swing.JComponent
 import javax.swing.JTextField
 import javax.swing.event.DocumentEvent
@@ -29,7 +27,7 @@ import javax.swing.event.DocumentEvent
  * @author bofa1ex
  * @since 2021/3/13
  */
-class EditorEncodeHexAction : AnAction() {
+class EditorDecodeAsciiHexAction : AnAction() {
     /**
      * Replaces the run of text selected by the primary caret with a fixed string.
      *
@@ -47,21 +45,29 @@ class EditorEncodeHexAction : AnAction() {
         val end = primaryCaret.selectionEnd
         // Replace the selection with a fixed string.
         // Must do this document change in a write action context.
-        val dialog = EncodeHexDialog()
-        var original = document.text;
+        val dialog = DecodeHexDialog()
+        var replace = editor.selectionModel.selectedText!!
         if (dialog.showAndGet()) {
             val charset = Charset.forName(dialog.getCharset())
-            original = Hex.toHexString(document.text.toByteArray(charset))
-            if (dialog.isUpper){
-                original = StringUtils.upperCase(original)
+            try {
+                replace = String(Hex.decode(replace.toByteArray(charset)))
+            } catch (e: DecoderException) {
+                Messages.showErrorDialog(e.message, "Decode Error")
+            }
+            if (dialog.isTrim){
+                replace = StringUtils.trim(replace)
+            }
+            if (dialog.isUpper) {
+                replace = StringUtils.upperCase(replace)
             }
         }
         WriteCommandAction.runWriteCommandAction(project) {
-            document.replaceString(start, end, original)
+            document.replaceString(start, end, replace)
         }
         // De-select the text range that was just replaced
         primaryCaret.removeSelection()
     }
+
 
     /**
      * Sets visibility and enables this action menu item if:
@@ -82,9 +88,9 @@ class EditorEncodeHexAction : AnAction() {
     }
 
 
-    class EncodeHexDialog : DialogWrapper(true) {
+    class DecodeHexDialog : DialogWrapper(true) {
         var isUpper = true
-
+        var isTrim = false
         fun getCharset(): String {
             return charsetComboBox.editor.editorComponent.castSafelyTo<JTextField>()!!.text.trim()
         }
@@ -119,12 +125,19 @@ class EditorEncodeHexAction : AnAction() {
                         isSelected = true
                     }
                 }
+                row {
+                    radioButton("Trim Blank").withSelectedBinding(
+                            PropertyBinding({ isTrim }, { isTrim = it })
+                    ).applyToComponent {
+                        isSelected = false
+                    }
+                }
             }
         }
 
         init {
             init()
-            title = "Encode Hex Options"
+            title = "Decode Hex Options"
         }
 
     }

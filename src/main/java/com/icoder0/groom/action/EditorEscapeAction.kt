@@ -28,8 +28,9 @@ class EditorEscapeAction : AnAction() {
         val end = primaryCaret.selectionEnd
         // Replace the selection with a fixed string.
         // Must do this document change in a write action context.
-        WriteCommandAction.runWriteCommandAction(project
-        ) { document.replaceString(start, end, StringUtils.replace(document.text, "\"", "\\\"")) }
+        WriteCommandAction.runWriteCommandAction(project) {
+            document.replaceString(start, end, StringUtils.replace(editor.selectionModel.selectedText, "\"", "\\\""))
+        }
         // De-select the text range that was just replaced
         primaryCaret.removeSelection()
     }

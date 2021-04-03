@@ -28,8 +28,11 @@ class EditorCompressAndEscapeAction : AnAction() {
         val end = primaryCaret.selectionEnd
         // Replace the selection with a fixed string.
         // Must do this document change in a write action context.
-        WriteCommandAction.runWriteCommandAction(project
-        ) { document.replaceString(start, end, StringUtils.replaceEach(document.text, arrayOf("\"", "\n", "\t", "\r", " "), arrayOf("\\\"", "", "", "", ""))) }
+        WriteCommandAction.runWriteCommandAction(project) {
+            document.replaceString(start, end, StringUtils.replaceEach(
+                    editor.selectionModel.selectedText, arrayOf("\"", "\n", "\t", "\r", " "), arrayOf("\\\"", "", "", "", ""))
+            )
+        }
         // De-select the text range that was just replaced
         primaryCaret.removeSelection()
     }
