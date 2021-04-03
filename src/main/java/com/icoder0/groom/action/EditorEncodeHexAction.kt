@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.Messages
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.layout.PropertyBinding
@@ -15,7 +14,6 @@ import com.intellij.ui.layout.panel
 import com.intellij.ui.layout.withSelectedBinding
 import com.intellij.util.castSafelyTo
 import org.apache.commons.lang.StringUtils
-import org.bouncycastle.util.encoders.DecoderException
 import org.bouncycastle.util.encoders.Hex
 import java.nio.charset.Charset
 import javax.swing.JComponent
@@ -27,7 +25,7 @@ import javax.swing.event.DocumentEvent
  * @author bofa1ex
  * @since 2021/3/13
  */
-class EditorDecodeAsciiHexAction : AnAction() {
+class EditorEncodeHexAction : AnAction() {
     /**
      * Replaces the run of text selected by the primary caret with a fixed string.
      *
@@ -45,20 +43,16 @@ class EditorDecodeAsciiHexAction : AnAction() {
         val end = primaryCaret.selectionEnd
         // Replace the selection with a fixed string.
         // Must do this document change in a write action context.
-        val dialog = DecodeHexDialog()
+        val dialog = EncodeHexDialog()
         var replace = editor.selectionModel.selectedText!!
         if (dialog.showAndGet()) {
             val charset = Charset.forName(dialog.getCharset())
-            try {
-                replace = String(Hex.decode(replace.toByteArray(charset)))
-            } catch (e: DecoderException) {
-                Messages.showErrorDialog(e.message, "Decode Error")
-            }
-            if (dialog.isTrim){
-                replace = StringUtils.trim(replace)
-            }
+            replace = Hex.toHexString(replace.toByteArray(charset))
             if (dialog.isUpper) {
                 replace = StringUtils.upperCase(replace)
+            }
+            if (dialog.isFillBlank) {
+                replace = fillBlank(replace)
             }
         }
         WriteCommandAction.runWriteCommandAction(project) {
@@ -68,6 +62,22 @@ class EditorDecodeAsciiHexAction : AnAction() {
         primaryCaret.removeSelection()
     }
 
+    fun fillBlank(original: String): String {
+        var input = original
+        if (original.length % 2 != 0) {
+            input = StringUtils.leftPad(input, input.length + 1, '0')
+        }
+        val charArray = input.toCharArray()
+        val builder = StringBuilder()
+        var i = 0
+        while (i < charArray.size) {
+            builder.append(charArray[i++]).append(charArray[i++])
+            if (i < charArray.size){
+                builder.append(" ")
+            }
+        }
+        return builder.toString()
+    }
 
     /**
      * Sets visibility and enables this action menu item if:
@@ -88,9 +98,9 @@ class EditorDecodeAsciiHexAction : AnAction() {
     }
 
 
-    class DecodeHexDialog : DialogWrapper(true) {
+    class EncodeHexDialog : DialogWrapper(true) {
         var isUpper = true
-        var isTrim = false
+        var isFillBlank = false
         fun getCharset(): String {
             return charsetComboBox.editor.editorComponent.castSafelyTo<JTextField>()!!.text.trim()
         }
@@ -126,8 +136,8 @@ class EditorDecodeAsciiHexAction : AnAction() {
                     }
                 }
                 row {
-                    radioButton("Trim Blank").withSelectedBinding(
-                            PropertyBinding({ isTrim }, { isTrim = it })
+                    radioButton("Fill Blank").withSelectedBinding(
+                            PropertyBinding({ isFillBlank }, { isFillBlank = it })
                     ).applyToComponent {
                         isSelected = false
                     }
@@ -137,7 +147,7 @@ class EditorDecodeAsciiHexAction : AnAction() {
 
         init {
             init()
-            title = "Decode Hex Options"
+            title = "Encode Hex Options"
         }
 
     }
