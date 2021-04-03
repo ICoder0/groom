@@ -14,14 +14,66 @@
     ]]></description>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Groom" secondary="true" icon="ToolWindowIcons.Logo" anchor="right"
+        <toolWindow id="Groom" secondary="true" anchor="right" icon="ToolWindowIcons.Logo"
                     factoryClass="com.icoder0.groom.GroomToolWindowFactory"/>
-        <fileType name="Simple File" implementationClass="com.icoder0.groom.language.simple.SimpleFileType"
-                  fieldName="INSTANCE" language="Simple" extensions="simple"/>
-
     </extensions>
 
     <actions>
+        <group id="EditorBasics.Encode/Decode.Group"
+               class="com.intellij.ide.actions.SmartPopupActionGroup"
+               text="Encode/Decode..."
+               description="Group of Encode/Decode actions"
+               popup="true">
+            <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>
+            <!-- MD5/SHA -->
+            <action id="EditorBasics.EditorEncodeMD5Action"
+                    class="com.icoder0.groom.action.EditorEncodeMD5Action"
+                    text="Encode MD5 Hex"
+                    description="Encode MD5 selected text."/>
+            <action id="EditorBasics.EditorEncodeSha1Action"
+                    class="com.icoder0.groom.action.EditorEncodeSha1Action"
+                    text="Encode SHA1 Hex"
+                    description="Encode SHA1 selected text."/>
+            <action id="EditorBasics.EditorEncodeSha256Action"
+                    class="com.icoder0.groom.action.EditorEncodeSha256Action"
+                    text="Encode SHA256 Hex"
+                    description="Encode SHA256 selected text."/>
+            <action id="EditorBasics.EditorEncodeSha512Action"
+                    class="com.icoder0.groom.action.EditorEncodeSha512Action"
+                    text="Encode SHA512 Hex"
+                    description="Encode SHA512 selected text."/>
+            <separator/>
+            <!-- Base64 -->
+            <action id="EditorBasics.EditorDecodeBase64Action"
+                    class="com.icoder0.groom.action.EditorDecodeBase64Action"
+                    text="Decode Base64"
+                    description="Decode Base64 selected text."/>
+            <action id="EditorBasics.EditorEncodeBase64Action"
+                    class="com.icoder0.groom.action.EditorEncodeBase64Action"
+                    text="Encode Base64"
+                    description="Encode Base64 selected text."/>
+            <separator/>
+            <!-- Hex -->
+            <action id="EditorBasics.EditorDecodeHexAction"
+                    class="com.icoder0.groom.action.EditorDecodeHexAction"
+                    text="Decode Hex"
+                    description="Decode Hex selected text."/>
+            <action id="EditorBasics.EditorEncodeHexAction"
+                    class="com.icoder0.groom.action.EditorEncodeHexAction"
+                    text="Encode Hex"
+                    description="Encode Hex selected text."/>
+            <separator/>
+            <!--    SHA3        -->
+            <action id="EditorBasics.EditorEncodeSha3256Action"
+                    class="com.icoder0.groom.action.EditorEncodeSha3256Action"
+                    text="Encode SHA3-256 Hex"
+                    description="Encode SHA3-256 selected text."/>
+            <action id="EditorBasics.EditorEncodeSha3512Action"
+                    class="com.icoder0.groom.action.EditorEncodeSha3512Action"
+                    text="Encode SHA3-512 Hex"
+                    description="Encode SHA3-512 selected text."/>
+            <separator/>
+        </group>
         <action id="EditorBasics.EditorEscapeAction"
                 class="com.icoder0.groom.action.EditorEscapeAction"
                 text="Escape"
@@ -48,6 +100,7 @@
     <change-notes>
         <![CDATA[
       <ul>
+        <li><b>1.0.3</b> add more encode/decode actions(base64/md5/sha/hex/etc) in BasicEditorPopupMenu.</li>
         <li><b>1.0.2</b> add pluginIcon and editor actions such as compress/escape/etc.</li>
         <li><b>1.0.1</b> add panel only display composite language editor.</li>
         <li><b>1.0.0</b> initial feature with websocket basic interaction..</li>
