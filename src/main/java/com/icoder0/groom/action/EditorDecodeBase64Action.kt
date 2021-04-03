@@ -43,9 +43,13 @@ class EditorDecodeBase64Action : AnAction() {
         // Replace the selection with a fixed string.
         // Must do this document change in a write action context.
         val dialog = EncodeBase64Dialog()
-        val charset = Charset.forName(dialog.getCharset())
+        var replace = editor.selectionModel.selectedText!!
+        if (dialog.showAndGet()){
+            val charset = Charset.forName(dialog.getCharset())
+            replace = String(Base64.decodeBase64(document.text.toByteArray(charset)))
+        }
         WriteCommandAction.runWriteCommandAction(project) {
-            document.replaceString(start, end, String(Base64.decodeBase64(document.text.toByteArray(charset))))
+            document.replaceString(start, end, replace)
         }
         // De-select the text range that was just replaced
         primaryCaret.removeSelection()
