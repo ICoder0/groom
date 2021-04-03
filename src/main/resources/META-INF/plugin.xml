@@ -54,14 +54,14 @@
                     description="Encode Base64 selected text."/>
             <separator/>
             <!-- Hex -->
-            <action id="EditorBasics.EditorDecodeHexAction"
-                    class="com.icoder0.groom.action.EditorDecodeHexAction"
-                    text="Decode Hex"
-                    description="Decode Hex selected text."/>
-            <action id="EditorBasics.EditorEncodeHexAction"
-                    class="com.icoder0.groom.action.EditorEncodeHexAction"
-                    text="Encode Hex"
-                    description="Encode Hex selected text."/>
+            <action id="EditorBasics.EditorDecodeAsciiHexAction"
+                    class="com.icoder0.groom.action.EditorDecodeAsciiHexAction"
+                    text="Decode Ascii Hex"
+                    description="Decode CharSequence Hex selected text."/>
+            <action id="EditorBasics.EditorEncodeAsciiHexAction"
+                    class="com.icoder0.groom.action.EditorEncodeAsciiHexAction"
+                    text="Encode Ascii Hex"
+                    description="Encode CharSequence Hex selected text."/>
             <separator/>
             <!--    SHA3        -->
             <action id="EditorBasics.EditorEncodeSha3256Action"
