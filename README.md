@@ -1,8 +1,7 @@
 # groom
-
-![Build](https://github.com/ICoder0/groom/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
+![Version](https://img.shields.io/jetbrains/plugin/v/com.icoder0.groom)
+![Rating](https://img.shields.io/jetbrains/plugin/r/rating/com.icoder0.groom)
+![Downloads](https://img.shields.io/jetbrains/plugin/d/com.icoder0.groom)
 
 ## Template ToDo list
 - [x] Create a new [IntelliJ Platform Plugin Template][template] project.
