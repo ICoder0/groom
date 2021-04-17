@@ -10,12 +10,13 @@
     <idea-version since-build="201.6668.113"/>
 
     <description><![CDATA[
-         supported websocket-client/composite-language-editor(escape/compress/etc).
+         supported websocket-client/composite-language-editor(escape/compress/encode/decode/etc).
     ]]></description>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Groom" secondary="true" anchor="right" icon="ToolWindowIcons.Logo"
-                    factoryClass="com.icoder0.groom.GroomToolWindowFactory"/>
+        <toolWindow id="Groom" secondary="true" anchor="right" icon="GroomIcons.Logo"
+                    factoryClass="com.icoder0.groom.GroomToolWindowFactory"
+                    canCloseContents="true"/>
     </extensions>
 
     <actions>
