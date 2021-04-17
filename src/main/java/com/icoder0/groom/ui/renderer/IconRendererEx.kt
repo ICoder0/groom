@@ -1,4 +1,4 @@
-package com.icoder0.groom.renderer
+package com.icoder0.groom.ui.renderer
 
 import java.awt.Component
 import javax.swing.Icon

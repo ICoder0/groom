@@ -1,6 +1,5 @@
-package com.icoder0.groom.renderer
+package com.icoder0.groom.ui.renderer
 
-import com.icoder0.groom.component.EditorManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project

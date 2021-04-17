@@ -1,4 +1,4 @@
-package com.icoder0.groom.renderer
+package com.icoder0.groom.ui.renderer
 
 import org.apache.commons.lang.StringUtils
 import java.awt.Component
