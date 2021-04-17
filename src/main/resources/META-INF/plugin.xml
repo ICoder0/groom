@@ -78,21 +78,21 @@
                 class="com.icoder0.groom.action.EditorEscapeAction"
                 text="Escape"
                 description="Escape selected text."
-                icon="EditorActionIcons.Escape">
+                icon="GroomIcons.Escape">
             <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>
         </action>
         <action id="EditorBasics.EditorCompressAction"
                 class="com.icoder0.groom.action.EditorCompressAction"
                 text="Compress"
                 description="Compress selected text."
-                icon="EditorActionIcons.Compress">
+                icon="GroomIcons.Compress">
             <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>
         </action>
         <action id="EditorBasics.EditorCompressAndEscapeAction"
                 class="com.icoder0.groom.action.EditorCompressAndEscapeAction"
                 text="Compress and Escape"
                 description="Compress and Escape selected text."
-                icon="EditorActionIcons.Composite">
+                icon="GroomIcons.Composite">
             <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>
         </action>
     </actions>
@@ -100,6 +100,7 @@
     <change-notes>
         <![CDATA[
       <ul>
+        <li><b>1.0.4</b> empty</li>
         <li><b>1.0.3</b> add more encode/decode actions(base64/md5/sha/hex/etc) in BasicEditorPopupMenu.</li>
         <li><b>1.0.2</b> add pluginIcon and editor actions such as compress/escape/etc.</li>
         <li><b>1.0.1</b> add panel only display composite language editor.</li>
