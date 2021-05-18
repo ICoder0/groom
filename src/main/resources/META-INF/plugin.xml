@@ -10,16 +10,41 @@
     <idea-version since-build="201.6668.113"/>
 
     <description><![CDATA[
-         supported websocket-client/composite-language-editor(escape/compress/encode/decode/etc).
+         multi-tab with ws-client/composite-language-editor(escape/compress/encode/decode/etc).
     ]]></description>
 
     <extensions defaultExtensionNs="com.intellij">
+        <projectService serviceImplementation="com.icoder0.groom.component.WebsocketSettingsManager"/>
         <toolWindow id="Groom" secondary="true" anchor="right" icon="GroomIcons.Logo"
                     factoryClass="com.icoder0.groom.GroomToolWindowFactory"
                     canCloseContents="true"/>
     </extensions>
 
+    <application-components>
+        <component>
+            <implementation-class>com.icoder0.groom.component.WebsocketSettingsManager</implementation-class>
+            <interface-class>com.icoder0.groom.component.WebsocketSettingsManager</interface-class>
+        </component>
+    </application-components>
     <actions>
+        <!-- websocket-view actions -->
+        <action id= "WebsocketView.PanelViewFilterAction" class="com.icoder0.groom.action.WebsocketPanelViewFilterAction"
+                description="Toggle to show TableView/EditorView" icon="AllIcons.General.Filter"/>
+        <action id= "WebsocketView.TableViewFilterAction" class="com.icoder0.groom.action.WebsocketTableViewFilterAction"
+                description="Toggle to show Inbound/Outbound Message" icon="AllIcons.General.Filter"/>
+        <action id= "WebsocketView.RunWithRerunAction" class="com.icoder0.groom.action.WebsocketRunWithRerunAction"
+                description="Run/reRun client" icon="AllIcons.Actions.StartDebugger"/>
+        <action id= "WebsocketView.StopAction" class="com.icoder0.groom.action.WebsocketStopAction"
+                description="Stop client" icon="AllIcons.Actions.Suspend"/>
+        <action id= "WebsocketView.ConfigurationAction" class="com.icoder0.groom.action.WebsocketRunConfigurationAction"/>
+        <group id="WebsocketView.MainToolbar">
+            <reference id="WebsocketView.ConfigurationAction"/>
+            <reference id="WebsocketView.RunWithRerunAction"/>
+            <reference id="WebsocketView.StopAction"/>
+            <separator/>
+            <reference id="WebsocketView.PanelViewFilterAction"/>
+            <reference id="WebsocketView.TableViewFilterAction"/>
+        </group>
         <group id="EditorBasics.Encode/Decode.Group"
                class="com.intellij.ide.actions.SmartPopupActionGroup"
                text="Encode/Decode..."
@@ -101,7 +126,12 @@
     <change-notes>
         <![CDATA[
       <ul>
-        <li><b>1.0.4</b> empty</li>
+        <li><b>1.0.4</b>
+            support multi-tabs(choose editor/client), via improving layout utilization to optimize UI interactions.
+            new feature on ws-client(persisting configurations to reused, toggle to show TableView/EditorView, etc).
+            client run/stop action would be background-task arrived on statusBar, u can also cancel it when u wanna make it.
+            in final, any error message was unified by using notification.
+        </li>
         <li><b>1.0.3</b> add more encode/decode actions(base64/md5/sha/hex/etc) in BasicEditorPopupMenu.</li>
         <li><b>1.0.2</b> add pluginIcon and editor actions such as compress/escape/etc.</li>
         <li><b>1.0.1</b> add panel only display composite language editor.</li>
