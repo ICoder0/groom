@@ -12,21 +12,14 @@ import javax.swing.table.TableCellRenderer
  * @since 2021/3/6
  */
 class TextFieldTableCellRenderer : TableCellRenderer {
-    private val componentMap: MutableMap<Int, JTextField> = ConcurrentHashMap()
     override fun getTableCellRendererComponent(table: JTable, value: Any, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
         val text = StringUtils.replace(value as String, "\n", "↵")
-        val comp = componentMap.compute(row) { _: Int?, old: JTextField? ->
-            if (old != null) {
-                old.text = text
-                return@compute old
-            }
-            JTextField(text)
-        }
+        val comp = JTextField(text)
         if (isSelected && table.selectedColumn == column) {
-            comp!!.foreground = table.selectionForeground
+            comp.foreground = table.selectionForeground
             comp.background = table.selectionBackground
         } else {
-            comp!!.foreground = table.foreground
+            comp.foreground = table.foreground
             comp.background = table.background
         }
         comp.font = table.font
@@ -35,9 +28,5 @@ class TextFieldTableCellRenderer : TableCellRenderer {
         }
         table.setRowHeight(row, table.rowHeight)
         return comp
-    }
-
-    fun reset() {
-        componentMap.clear()
     }
 }
