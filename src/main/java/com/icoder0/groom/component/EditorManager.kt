@@ -1,21 +1,22 @@
 package com.icoder0.groom.component
 
-import com.icoder0.groom.panel.IPanel
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.json.JsonFileType
 import com.intellij.json.JsonLanguage
-import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.LanguageTextField.DocumentCreator
 import com.intellij.ui.LanguageTextField.SimpleDocumentCreator
-import java.util.*
 import java.util.function.Supplier
-import kotlin.collections.HashMap
+import javax.swing.JPanel
+import javax.swing.ScrollPaneConstants
 
 /**
  * @author bofa1ex
@@ -25,23 +26,36 @@ open class EditorManager {
     companion object EditorManagerInternal {
         val DEFAULT_CREATOR: DocumentCreator = SimpleDocumentCreator()
 
-        val editorPanelMap: MutableMap<IPanel, MutableMap<String, Editor>> = HashMap()
+        val editorPanelMap: MutableMap<JPanel, MutableMap<String, Editor>> = HashMap()
 
         val editorDisplayMap: MutableMap<String, Supplier<Editor>> = HashMap()
 
-        val editorFactory = EditorFactory.getInstance()
+        val editorFactory = EditorFactory.getInstance()!!
 
-        fun getEditor(iPanel: IPanel, display: String): Editor {
-            val editorMap = editorPanelMap.computeIfAbsent(iPanel) { t -> HashMap() }
-            return editorMap.computeIfAbsent(display) { t -> editorDisplayMap[display]!!.get() }
+        fun getEditor(panel: JPanel, display: String): Editor {
+            return editorPanelMap[panel]!![display]!!
+        }
+
+        fun initPanel(panel: JPanel){
+            editorPanelMap.putIfAbsent(panel, mutableMapOf(
+                    Pair("json", editorDisplayMap["json"]!!.get()),
+                    Pair("plainText", editorDisplayMap["plainText"]!!.get()),
+                    Pair("html", editorDisplayMap["html"]!!.get()),
+                    Pair("xml", editorDisplayMap["xml"]!!.get()),
+            ))
+        }
+
+        fun disposePanel(panel: JPanel){
+            editorPanelMap[panel]?.forEach { _, editor ->
+                EditorFactory.getInstance().releaseEditor(editor)
+            }
+            editorPanelMap[panel]?.clear()
         }
 
         fun init(project: Project?) {
             editorDisplayMap["json"] = Supplier {
                 editorFactory.createEditor(DEFAULT_CREATOR.createDocument("", JsonLanguage.INSTANCE, project), project, JsonFileType.INSTANCE, false).apply {
                     this.settings.apply {
-                        additionalLinesCount = 45
-                        additionalColumnsCount = 0
                         isCaretRowShown = false
                         isRightMarginShown = false
                         isAdditionalPageAtBottom = false
@@ -52,8 +66,6 @@ open class EditorManager {
             editorDisplayMap["plainText"] = Supplier {
                 editorFactory.createEditor(editorFactory.createDocument("")).apply {
                     this.settings.apply {
-                        additionalLinesCount = 45
-                        additionalColumnsCount = 0
                         isCaretRowShown = false
                         isRightMarginShown = false
                         isAdditionalPageAtBottom = false
@@ -63,10 +75,7 @@ open class EditorManager {
             }
             editorDisplayMap["xml"] = Supplier {
                 editorFactory.createEditor(DEFAULT_CREATOR.createDocument("", XMLLanguage.INSTANCE, project), project, XmlFileType.INSTANCE, false).apply {
-                    this.settings.setTabSize(4)
                     this.settings.apply {
-                        additionalLinesCount = 45
-                        additionalColumnsCount = 0
                         isCaretRowShown = false
                         isRightMarginShown = false
                         isAdditionalPageAtBottom = false
@@ -78,9 +87,6 @@ open class EditorManager {
             editorDisplayMap["html"] = Supplier {
                 editorFactory.createEditor(DEFAULT_CREATOR.createDocument("", HTMLLanguage.INSTANCE, project), project, HtmlFileType.INSTANCE, false).apply {
                     this.settings.apply {
-                        setTabSize(4)
-                        additionalLinesCount = 45
-                        additionalColumnsCount = 0
                         isCaretRowShown = false
                         isRightMarginShown = false
                         isAdditionalPageAtBottom = false
