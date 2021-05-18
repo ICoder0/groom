@@ -1,5 +1,6 @@
 package com.icoder0.groom.ui.renderer
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
@@ -13,7 +14,7 @@ import javax.swing.JTable
  * @author bofa1ex
  * @since 2021/3/5
  */
-class EditorExTableCellEditor(private var project: Project) : AbstractTableCellEditor() {
+class EditorExTableCellEditor(private var project: Project) : AbstractTableCellEditor(), Disposable {
     private val editor = EditorFactory.getInstance().createEditor(EditorFactory.getInstance().createDocument(""))
     private val editorOriginalCellHeight: Int
 
@@ -42,5 +43,9 @@ class EditorExTableCellEditor(private var project: Project) : AbstractTableCellE
         editor.settings.isAdditionalPageAtBottom = false
         editor.settings.isRightMarginShown = false
         editorOriginalCellHeight = editor.component.getFontMetrics(editor.component.font).height
+    }
+
+    override fun dispose() {
+        EditorFactory.getInstance().releaseEditor(editor)
     }
 }
