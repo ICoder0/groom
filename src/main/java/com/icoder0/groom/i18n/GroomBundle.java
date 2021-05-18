@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * @author bofa1ex
  * @since 2021/4/11
  */
-public final class GroomBundle extends DynamicBundle {
+public class GroomBundle extends DynamicBundle {
     @NonNls
     private static final String BUNDLE = "messages.GroomBundle";
 
