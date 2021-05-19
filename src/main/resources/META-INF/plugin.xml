@@ -127,11 +127,13 @@
     <change-notes>
         <![CDATA[
       <ul>
+        <li><b>1.0.5</b>
+            fix EditorManager#initPanel AlreadyDisposed Error.
+            feature: filter-action item-modified hint.
+        </li>
         <li><b>1.0.4</b>
-            support multi-tabs(choose editor/client), via improving layout utilization to optimize UI interactions.
-            new feature on ws-client(persisting configurations to reused, toggle to show TableView/EditorView, etc).
-            client run/stop action would be background-task arrived on statusBar, u can also cancel it when u wanna make it.
-            in final, any error message was unified by using notification.
+            change layout utilization multi-tabs(editor/client).
+            feature: ws-client(persisting configuration, filter TableView/EditorView).
         </li>
         <li><b>1.0.3</b> add more encode/decode actions(base64/md5/sha/hex/etc) in BasicEditorPopupMenu.</li>
         <li><b>1.0.2</b> add pluginIcon and editor actions such as compress/escape/etc.</li>
