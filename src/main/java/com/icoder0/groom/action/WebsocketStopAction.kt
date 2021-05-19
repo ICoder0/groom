@@ -2,6 +2,7 @@ package com.icoder0.groom.action
 
 import com.icoder0.groom.component.NotificationManager
 import com.icoder0.groom.ui.WebsocketClientView
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
@@ -34,7 +35,7 @@ class WebsocketStopAction : DumbAwareAction() {
             try {
                 websocketClient?.disconnect(0)
             } catch (e: Exception) {
-                NotificationManager.notifyError(project, e.message)
+                NotificationManager.notify(project, NotificationType.ERROR, e.message)
             }
         }
     }
