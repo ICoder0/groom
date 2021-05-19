@@ -139,9 +139,9 @@ open class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : Gro
                                 true
                         ).apply {
                             setTargetComponent(this@WebsocketClientView)
-                        }.component(growX)
+                        }.component(growX, pushX)
                     }
-                    right { wsSearchTextField() }
+                    right { wsSearchTextField(growX) }
                 }
                 row {
                     cell(isFullWidth = true) {

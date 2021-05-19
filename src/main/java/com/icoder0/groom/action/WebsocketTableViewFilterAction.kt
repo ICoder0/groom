@@ -2,6 +2,8 @@ package com.icoder0.groom.action
 
 import com.icoder0.groom.component.ChooserManager
 import com.icoder0.groom.ui.WebsocketClientView
+import com.intellij.execution.runners.ExecutionUtil
+import com.intellij.icons.AllIcons
 import com.intellij.ide.util.ElementsChooser
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
@@ -14,6 +16,8 @@ import java.util.function.UnaryOperator
  */
 class WebsocketTableViewFilterAction : DumbAwareAction() {
 
+    var isModify = false
+
     companion object FilterObjectKind {
         const val INBOUND = "Inbound"
         const val OUTBOUND = "Outbound"
@@ -21,6 +25,7 @@ class WebsocketTableViewFilterAction : DumbAwareAction() {
 
     override fun update(e: AnActionEvent) {
         e.presentation.text = "Filter Inbound/Outbound message"
+        e.presentation.icon = if(isModify) ExecutionUtil.getLiveIndicator(AllIcons.General.Filter) else AllIcons.General.Filter
     }
 
     override fun actionPerformed(e: AnActionEvent) {
@@ -32,6 +37,7 @@ class WebsocketTableViewFilterAction : DumbAwareAction() {
                         t.setElementMarked(element, true)
                         return@ElementsMarkListener
                     }
+                    isModify = t.markedElements.size != 2
                     if (t.markedElements.size == 2) {
                         websocketClientView.firePayloadFilter(WebsocketClientView.allType, websocketClientView.wsPayloadMatch)
                         return@ElementsMarkListener

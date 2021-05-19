@@ -3,11 +3,11 @@ package com.icoder0.groom.dialog
 import com.icoder0.groom.component.NotificationManager
 import com.icoder0.groom.component.WebsocketSettingsManager
 import com.icoder0.groom.configurable.WebsocketConfigurable
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.options.ex.SingleConfigurableEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ValidationInfo
 import javax.swing.DefaultListModel
-import javax.swing.JComponent
 
 /**
  * @author bofa1ex
@@ -22,9 +22,8 @@ open class WebsocketManagerDialog(project: Project?,
     }
 
     override fun doHelpAction() {
-        NotificationManager.notifyInfo(project,
-                "Input RequestURL\n" +
-                        "e.g. ws://{ws.server.ip/domain}:{ws.server.port}/{path}"
+        NotificationManager.notify(project, NotificationType.INFORMATION,
+                "Input RequestURL\n e.g. ws://{ws.server.ip/domain}:{ws.server.port}/{path}"
         )
     }
 
