@@ -48,9 +48,9 @@ import javax.swing.table.TableRowSorter
  * @author bofa1ex
  * @since  2021/3/12
  */
-open class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToolWindowPanel("WebsocketClient", project, toolWindow) {
+open class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToolWindowPanel(project, toolWindow) {
 
-    var wsClientAddress : String? = null
+    var wsClientAddress: String? = null
     var wsClient: WebSocket? = null
     var wsPayloadMatch: String? = null
     var wsPayloadType: Int = allType
@@ -157,9 +157,6 @@ open class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : Gro
         return this
     }
 
-//    /* websocket#address文本框 */
-//    private var wsAddressTextField = JBTextField("wss://socket.idcd.com:1443").apply { toolTipText = "wss://{ip}:{port}/" }
-
     private var commitButton = JButton(AllIcons.Actions.Commit).apply {
         this.addActionListener {
             kotlin.run {
@@ -174,7 +171,7 @@ open class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : Gro
         }
     }.apply { isEnabled = false }
 
-    private var wsRequestEditor = EditorManager.getEditor(this, "json")
+    private var wsRequestEditor = EditorManager.getEditor(project, this, "json")
 
     private var wsRequestEditorWrapperPanel = simplePanel(wsRequestEditor.component)
 
@@ -193,7 +190,7 @@ open class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : Gro
         this.addActionListener {
             val oldText: String = wsRequestEditor.document.text
             wsRequestEditorWrapperPanel.remove(wsRequestEditor.component)
-            wsRequestEditor = EditorManager.getEditor(this@WebsocketClientView, this.selectedItem as String)
+            wsRequestEditor = EditorManager.getEditor(project, this@WebsocketClientView, this.selectedItem as String)
             // Make the document change in the context of a write action.
             WriteCommandAction.runWriteCommandAction(project) {
                 wsRequestEditor.document.replaceString(
@@ -333,8 +330,7 @@ open class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : Gro
 
     override fun dispose() {
         super.dispose()
-        disposePanel(this)
-        wsPayloadTableView.removeNotify()
+        disposePanel(project, this)
         editor.dispose()
         wsClient?.disconnect(-1, "system dispose")
     }

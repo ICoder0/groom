@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.sun.istack.Nullable
+import icons.GroomIcons
 
 
 /**
@@ -12,15 +13,15 @@ import com.sun.istack.Nullable
  * @since  2021/5/17
  */
 class NotificationManager {
-    companion object{
-        private val NOTIFICATION_GROUP = NotificationGroup("Custom Notification Group", NotificationDisplayType.BALLOON, true)
+    companion object {
+        private val NOTIFICATION_GROUP = NotificationGroup("Custom Notification Group", NotificationDisplayType.BALLOON, true, null, GroomIcons.Logo32x)
 
         fun notifyError(@Nullable project: Project?, content: String?) {
             NOTIFICATION_GROUP.createNotification(content!!, NotificationType.ERROR)
                     .notify(project)
         }
 
-        fun notifyInfo(@Nullable project: Project?, content: String?){
+        fun notifyInfo(@Nullable project: Project?, content: String?) {
             NOTIFICATION_GROUP.createNotification(content!!, NotificationType.INFORMATION)
                     .notify(project)
         }

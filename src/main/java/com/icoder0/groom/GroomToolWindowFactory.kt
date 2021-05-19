@@ -43,7 +43,7 @@ class GroomToolWindowFactory : ToolWindowFactory, UserDataHolderBase() {
                 override fun actionPerformed(e: AnActionEvent) {
                     with(WebsocketClientView(project, toolWindow).initUI()) {
                         with(ContentFactory.SERVICE.getInstance().createContent(
-                                this, getData(GroomToolWindowPanel.VIEW_NAME_KEY.name) as String, false
+                                this, "Uname", false
                         ).apply {
                             icon = GroomIcons.Socket
                             putUserData<Boolean>(ToolWindow.SHOW_CONTENT_ICON, java.lang.Boolean.TRUE)
@@ -58,7 +58,7 @@ class GroomToolWindowFactory : ToolWindowFactory, UserDataHolderBase() {
                 override fun actionPerformed(e: AnActionEvent) {
                     with(CompositeEditorView(project, toolWindow).initUI()) {
                         with(ContentFactory.SERVICE.getInstance().createContent(
-                                this, getData(GroomToolWindowPanel.VIEW_NAME_KEY.name) as String, false
+                                this, "Uname", false
                         ).apply {
                             icon = GroomIcons.Editor
                             putUserData<Boolean>(ToolWindow.SHOW_CONTENT_ICON, java.lang.Boolean.TRUE)
@@ -72,7 +72,7 @@ class GroomToolWindowFactory : ToolWindowFactory, UserDataHolderBase() {
         })
         with(CompositeEditorView(project, toolWindow).initUI()) {
             contentManager.addContent(ContentFactory.SERVICE.getInstance().createContent(
-                    this, getData(GroomToolWindowPanel.VIEW_NAME_KEY.name) as String, false
+                    this, "Uname", false
             ).apply {
                 icon = GroomIcons.Editor
                 putUserData<Boolean>(ToolWindow.SHOW_CONTENT_ICON, java.lang.Boolean.TRUE)
