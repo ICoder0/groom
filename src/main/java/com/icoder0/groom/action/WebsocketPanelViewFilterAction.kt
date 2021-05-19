@@ -2,6 +2,8 @@ package com.icoder0.groom.action
 
 import com.icoder0.groom.component.ChooserManager
 import com.icoder0.groom.ui.WebsocketClientView
+import com.intellij.execution.runners.ExecutionUtil
+import com.intellij.icons.AllIcons
 import com.intellij.ide.util.ElementsChooser
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
@@ -16,6 +18,8 @@ import java.util.function.UnaryOperator
  */
 class WebsocketPanelViewFilterAction : DumbAwareAction() {
 
+    var isModify = false
+
     companion object FilterObjectKind {
         const val TABLE_VIEW = "Table View"
         const val EDITOR_VIEW = "Editor View"
@@ -23,6 +27,7 @@ class WebsocketPanelViewFilterAction : DumbAwareAction() {
 
     override fun update(e: AnActionEvent) {
         e.presentation.text = "Filter TableView/EditorView"
+        e.presentation.icon = if(isModify) ExecutionUtil.getLiveIndicator(AllIcons.General.Filter) else AllIcons.General.Filter
     }
 
     override fun actionPerformed(e: AnActionEvent) {
@@ -38,6 +43,7 @@ class WebsocketPanelViewFilterAction : DumbAwareAction() {
                         TABLE_VIEW -> websocketClientView.fireToggleTableView(isMarked)
                         EDITOR_VIEW -> websocketClientView.fireToggleEditor(isMarked)
                     }
+                    isModify = t.markedElements.size != 2
                 })
                 return@UnaryOperator t
             })
