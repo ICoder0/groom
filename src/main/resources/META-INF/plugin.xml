@@ -129,6 +129,7 @@
       <ul>
         <li><b>1.0.5</b>
             fix EditorManager#initPanel AlreadyDisposed Error.
+            fix ConfigurationSettings cancel action(modify directly) Error.
             feature: filter-action item-modified hint.
         </li>
         <li><b>1.0.4</b>
