@@ -3,7 +3,7 @@ package com.icoder0.groom.action
 import com.icoder0.groom.component.NotificationManager
 import com.icoder0.groom.ui.WebsocketClientView
 import com.intellij.icons.AllIcons
-import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
@@ -12,7 +12,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.neovisionaries.ws.client.WebSocket
 import com.neovisionaries.ws.client.WebSocketAdapter
-import com.neovisionaries.ws.client.WebSocketException
 import com.neovisionaries.ws.client.WebSocketFrame
 import java.net.URI
 import java.util.concurrent.Executors
@@ -23,9 +22,9 @@ import java.util.concurrent.TimeUnit
  * @author bofa1ex
  * @since  2021/5/6
  */
-class WebsocketRunWithRerunAction : DumbAwareAction() {
+class WebsocketRunWithRerunAction : AnAction("","asdasd", AllIcons.Actions.StartDebugger) {
     override fun update(e: AnActionEvent) {
-        super.update(e)
+        e.presentation.text = "Run/Rerun websocket client"
         val websocketClientView = e.getData(WebsocketClientView.WEBSOCKET_VIEW_KEY)
         if (websocketClientView?.wsClient == null) {
             e.presentation.icon = AllIcons.Actions.StartDebugger

@@ -19,6 +19,10 @@ class WebsocketTableViewFilterAction : DumbAwareAction() {
         const val OUTBOUND = "Outbound"
     }
 
+    override fun update(e: AnActionEvent) {
+        e.presentation.text = "Filter Inbound/Outbound message"
+    }
+
     override fun actionPerformed(e: AnActionEvent) {
         val websocketClientView: WebsocketClientView? = e.getData<WebsocketClientView>(WebsocketClientView.WEBSOCKET_VIEW_KEY)
         val chooser = websocketClientView?.let {

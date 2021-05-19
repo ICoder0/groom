@@ -21,6 +21,10 @@ class WebsocketPanelViewFilterAction : DumbAwareAction() {
         const val EDITOR_VIEW = "Editor View"
     }
 
+    override fun update(e: AnActionEvent) {
+        e.presentation.text = "Filter TableView/EditorView"
+    }
+
     override fun actionPerformed(e: AnActionEvent) {
         val websocketClientView: WebsocketClientView? = e.getData<WebsocketClientView>(WebsocketClientView.WEBSOCKET_VIEW_KEY)
         val chooser = websocketClientView?.let {

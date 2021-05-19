@@ -28,22 +28,23 @@
     </application-components>
     <actions>
         <!-- websocket-view actions -->
-        <action id= "WebsocketView.PanelViewFilterAction" class="com.icoder0.groom.action.WebsocketPanelViewFilterAction"
-                description="Toggle to show TableView/EditorView" icon="AllIcons.General.Filter"/>
-        <action id= "WebsocketView.TableViewFilterAction" class="com.icoder0.groom.action.WebsocketTableViewFilterAction"
-                description="Toggle to show Inbound/Outbound Message" icon="AllIcons.General.Filter"/>
-        <action id= "WebsocketView.RunWithRerunAction" class="com.icoder0.groom.action.WebsocketRunWithRerunAction"
-                description="Run/reRun client" icon="AllIcons.Actions.StartDebugger"/>
-        <action id= "WebsocketView.StopAction" class="com.icoder0.groom.action.WebsocketStopAction"
-                description="Stop client" icon="AllIcons.Actions.Suspend"/>
-        <action id= "WebsocketView.ConfigurationAction" class="com.icoder0.groom.action.WebsocketRunConfigurationAction"/>
+        <action id="WebsocketView.PanelViewFilterAction" class="com.icoder0.groom.action.WebsocketPanelViewFilterAction"
+                icon="AllIcons.General.Filter"/>
+        <action id="WebsocketView.TableViewFilterAction" class="com.icoder0.groom.action.WebsocketTableViewFilterAction"
+                icon="AllIcons.General.Filter"/>
+        <action id="WebsocketView.RunWithRerunAction" class="com.icoder0.groom.action.WebsocketRunWithRerunAction"
+                icon="AllIcons.Actions.StartDebugger"/>
+        <action id="WebsocketView.StopAction" class="com.icoder0.groom.action.WebsocketStopAction"
+                icon="AllIcons.Actions.Suspend"/>
+        <action id="WebsocketView.ConfigurationAction"
+                class="com.icoder0.groom.action.WebsocketRunConfigurationAction"/>
         <group id="WebsocketView.MainToolbar">
-            <reference id="WebsocketView.ConfigurationAction"/>
-            <reference id="WebsocketView.RunWithRerunAction"/>
-            <reference id="WebsocketView.StopAction"/>
+            <reference ref="WebsocketView.ConfigurationAction"/>
+            <reference ref="WebsocketView.RunWithRerunAction"/>
+            <reference ref="WebsocketView.StopAction"/>
             <separator/>
-            <reference id="WebsocketView.PanelViewFilterAction"/>
-            <reference id="WebsocketView.TableViewFilterAction"/>
+            <reference ref="WebsocketView.PanelViewFilterAction"/>
+            <reference ref="WebsocketView.TableViewFilterAction"/>
         </group>
         <group id="EditorBasics.Encode/Decode.Group"
                class="com.intellij.ide.actions.SmartPopupActionGroup"

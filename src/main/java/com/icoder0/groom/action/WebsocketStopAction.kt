@@ -22,6 +22,7 @@ class WebsocketStopAction : DumbAwareAction() {
     }
 
     override fun update(e: AnActionEvent) {
+        e.presentation.text = "Stop websocket client"
         val websocketClientView = e.getData(WebsocketClientView.WEBSOCKET_VIEW_KEY)
         e.presentation.isEnabled = websocketClientView?.wsClient?.isOpen ?: false
     }

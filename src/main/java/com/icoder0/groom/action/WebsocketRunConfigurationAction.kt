@@ -49,7 +49,6 @@ class WebsocketRunConfigurationAction : ComboBoxAction(){
             presentation.icon = GroomIcons.Socket
         } else {
             presentation.setText(ExecutionBundle.messagePointer("action.presentation.RunConfigurationsComboBoxAction.text"))
-            ActionManager.getInstance()
             presentation.description = ActionsBundle.actionDescription(IdeActions.ACTION_EDIT_RUN_CONFIGURATIONS)
             if (ActionPlaces.TOUCHBAR_GENERAL == actionPlace) presentation.icon = AllIcons.General.Add else presentation.icon = null
         }
