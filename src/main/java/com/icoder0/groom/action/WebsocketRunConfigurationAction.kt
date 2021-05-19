@@ -83,17 +83,18 @@ class WebsocketRunConfigurationAction : ComboBoxAction(){
                 //setup template project configurations
                 project = ProjectManager.getInstance().defaultProject
             }
-            object : WebsocketManagerDialog(project, WebsocketSettingsManager.allSettings, selectedSettingMap.get(websocketClientView)) {
+            object : WebsocketManagerDialog(project, selectedSettingMap.get(websocketClientView)) {
                 override fun doOKAction() {
                     with((configurable as WebsocketConfigurable)) {
-                        allSettings.clear()
+                        WebsocketSettingsManager.allSettings.clear()
                         for (element in (allSettingsList.model as DefaultListModel).elements()) {
-                            allSettings.add(element)
+                            WebsocketSettingsManager.allSettings.add(element)
                         }
                         // update selected configuration.
-                        selectedSettings?.name = nameTextField.text
-                        selectedSettings?.address = addressTextField.text
-                        selectedSettingMap.put(websocketClientView!!, selectedSettings!!)
+                        selectedSettingsDup?.name = nameTextField.text
+                        selectedSettingsDup?.address = addressTextField.text
+                        selectedSettingMap[websocketClientView!!] = selectedSettingsDup!!
+                        configurable.disposeUIResources()
                     }
                     super.doOKAction()
                 }

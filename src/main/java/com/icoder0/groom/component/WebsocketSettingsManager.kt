@@ -23,9 +23,13 @@ class WebsocketSettingsManager : PersistentStateComponent<Element> {
         var allSettings = mutableListOf<WebsocketConfigurationSetting>()
     }
 
-    class WebsocketConfigurationSetting(var name: String = "", var address: String = "") {
+    class WebsocketConfigurationSetting(var name: String = "", var address: String = "") : Cloneable{
         override fun toString(): String {
             return name
+        }
+
+        public override fun clone(): WebsocketConfigurationSetting {
+            return super.clone() as WebsocketConfigurationSetting
         }
     }
 
