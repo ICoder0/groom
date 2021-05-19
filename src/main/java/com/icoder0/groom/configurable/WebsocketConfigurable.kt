@@ -11,14 +11,10 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.panel
-import com.intellij.util.ui.JBSwingUtilities
-import com.sun.org.apache.xpath.internal.operations.Bool
 import icons.GroomIcons
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.DefaultListModel
-import javax.swing.DefaultListSelectionModel
-import javax.swing.JTextField
 import javax.swing.SwingConstants.LEADING
 
 /**
@@ -26,22 +22,31 @@ import javax.swing.SwingConstants.LEADING
  * @since  2021/5/14
  */
 class WebsocketConfigurable(
-        val allSettings: MutableList<WebsocketSettingsManager.WebsocketConfigurationSetting>,
         var selectedSettings: WebsocketSettingsManager.WebsocketConfigurationSetting?) : BoundSearchableConfigurable("Websocket-Configurable", "", "Websocket-Configurable"
 ) {
-    init {
-        if (selectedSettings == null && allSettings.isEmpty()) {
-            selectedSettings = WebsocketSettingsManager.WebsocketConfigurationSetting("Uname")
+    var selectedSettingsDup : WebsocketSettingsManager.WebsocketConfigurationSetting? = null
+    var allSettingsDup = mutableListOf<WebsocketSettingsManager.WebsocketConfigurationSetting>().apply {
+        for (setting in WebsocketSettingsManager.allSettings) {
+            val clone = setting.clone()
+            if (setting == selectedSettings){ selectedSettingsDup = clone }
+            add(clone)
         }
     }
+
+    init {
+        if (selectedSettingsDup == null && allSettingsDup.isEmpty()) {
+            selectedSettingsDup = WebsocketSettingsManager.WebsocketConfigurationSetting("Uname")
+        }
+    }
+
     val addressLabel = JBLabel("RequestURL:\t")
     val nameLabel = JBLabel("Name:\t")
-    var addressTextField = JBTextField(selectedSettings?.address)
-    var nameTextField = JBTextField(selectedSettings?.name)
+    var addressTextField = JBTextField(selectedSettingsDup?.address)
+    var nameTextField = JBTextField(selectedSettingsDup?.name)
     val allSettingsList = JBList<WebsocketSettingsManager.WebsocketConfigurationSetting>(
-            if (allSettings.isEmpty()) mutableListOf(selectedSettings) else allSettings
+            if (allSettingsDup.isEmpty()) mutableListOf(selectedSettingsDup) else allSettingsDup
     ).apply {
-        setSelectedValue(selectedSettings, true)
+        setSelectedValue(selectedSettingsDup, true)
         installCellRenderer {
             JBLabel(it.name, GroomIcons.Socket, LEADING)
         }
@@ -55,10 +60,10 @@ class WebsocketConfigurable(
             }
             with(this@apply.selectedValue) {
                 // before change selectedSettings point, update current presentation
-                selectedSettings?.name = nameTextField.text
-                selectedSettings?.address = addressTextField.text
+                selectedSettingsDup?.name = nameTextField.text
+                selectedSettingsDup?.address = addressTextField.text
 
-                selectedSettings = this
+                selectedSettingsDup = this
                 nameTextField.text = name
                 addressTextField.text = address
             }
@@ -88,8 +93,8 @@ class WebsocketConfigurable(
                             .setRemoveAction {
                                 val removeElement = (allSettingsList.model as DefaultListModel).elementAt((it.contextComponent as JBList<*>).selectedIndex)
                                 (allSettingsList.model as DefaultListModel).removeElement(removeElement)
-                                if (selectedSettings == removeElement){
-                                    selectedSettings = null
+                                if (selectedSettingsDup == removeElement){
+                                    selectedSettingsDup = null
                                 }
                                 nameTextField.text = ""; addressTextField.text = ""
                             }

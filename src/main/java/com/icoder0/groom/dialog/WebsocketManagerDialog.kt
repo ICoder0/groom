@@ -13,10 +13,8 @@ import javax.swing.DefaultListModel
  * @author bofa1ex
  * @since 2021/5/10
  */
-open class WebsocketManagerDialog(project: Project?,
-                                  val allSettings: MutableList<WebsocketSettingsManager.WebsocketConfigurationSetting>,
-                                  var selectedSetting: WebsocketSettingsManager.WebsocketConfigurationSetting?
-) : SingleConfigurableEditor(project, WebsocketConfigurable(allSettings, selectedSetting), "Websocket-Configurable-DimensionKey", false) {
+open class WebsocketManagerDialog(project: Project?, selectedSetting: WebsocketSettingsManager.WebsocketConfigurationSetting?
+) : SingleConfigurableEditor(project, WebsocketConfigurable(selectedSetting), "Websocket-Configurable-DimensionKey", false) {
     init {
         this.title = "Websocket Configuration"
     }
@@ -33,10 +31,11 @@ open class WebsocketManagerDialog(project: Project?,
                 if (element.address.isEmpty()){
                     continue
                 }
-                if (element.address.matches(Regex("^(ws|wss)://\\w+:\\d{1,4}.*$"))) {
+                if (element.address.matches(Regex("^(ws|wss)://([a-zA-Z][a-zA-Z0-9_]*[.]?)+(:\\d{1,4})?(\\/[a-zA-Z0-9_]+)*(\\?[a-zA-Z0-9_]+)*(=[a-zA-Z0-9_&]+)*\$"))) {
                     continue
                 }
-                if (element.address.matches(Regex("^(ws|wss)://((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}:\\d{1,4}.*$"))) {
+
+                if (element.address.matches(Regex("^(ws|wss)://((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}(:\\d{1,4})?(\\/[a-zA-Z0-9_]+)*\$"))) {
                     continue
                 }
                 return ValidationInfo("Wrong specification + [" + element.address + "]", addressTextField)
@@ -44,10 +43,10 @@ open class WebsocketManagerDialog(project: Project?,
             if (addressTextField.text.isEmpty()){
                 return ValidationInfo("RequestURL must not be null", addressTextField)
             }
-            if (addressTextField.text.matches(Regex("^(ws|wss)://\\w+:\\d{1,4}.*$"))) {
+            if (addressTextField.text.matches(Regex("^(ws|wss)://([a-zA-Z][a-zA-Z0-9_]*[.]?)+(:\\d{1,4})?(\\/[a-zA-Z0-9_]+)*(\\?[a-zA-Z0-9_]+)*(=[a-zA-Z0-9_&]+)*\$"))) {
                 return null
             }
-            if (addressTextField.text.matches(Regex("^(ws|wss)://((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}:\\d{1,4}.*$"))) {
+            if (addressTextField.text.matches(Regex("^(ws|wss)://((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}(:\\d{1,4})?(\\/[a-zA-Z0-9_]+)*\$"))) {
                 return null
             }
             return ValidationInfo("Wrong specification + [" + addressTextField.text + "]", addressTextField)
