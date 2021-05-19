@@ -26,30 +26,45 @@ open class EditorManager {
     companion object EditorManagerInternal {
         val DEFAULT_CREATOR: DocumentCreator = SimpleDocumentCreator()
 
-        val editorPanelMap: MutableMap<JPanel, MutableMap<String, Editor>> = HashMap()
+        val editorProjectMap: MutableMap<Project, MutableMap<JPanel, MutableMap<String, Editor>>> = HashMap()
 
         val editorDisplayMap: MutableMap<String, Supplier<Editor>> = HashMap()
 
         val editorFactory = EditorFactory.getInstance()!!
 
-        fun getEditor(panel: JPanel, display: String): Editor {
-            return editorPanelMap[panel]!![display]!!
+        fun getEditor(project: Project, panel: JPanel, display: String): Editor {
+            return editorProjectMap[project]!![panel]!![display]!!
         }
 
-        fun initPanel(panel: JPanel){
-            editorPanelMap.putIfAbsent(panel, mutableMapOf(
-                    Pair("json", editorDisplayMap["json"]!!.get()),
-                    Pair("plainText", editorDisplayMap["plainText"]!!.get()),
-                    Pair("html", editorDisplayMap["html"]!!.get()),
-                    Pair("xml", editorDisplayMap["xml"]!!.get()),
-            ))
+        fun initPanel(project: Project, panel: JPanel) {
+            editorProjectMap.putIfAbsent(project, HashMap())
+            editorProjectMap.compute(project) { _, item ->
+                if (item == null){
+                    return@compute mutableMapOf(
+                            Pair(panel, mutableMapOf(
+                                    Pair("json", editorDisplayMap["json"]!!.get()),
+                                    Pair("plainText", editorDisplayMap["plainText"]!!.get()),
+                                    Pair("html", editorDisplayMap["html"]!!.get()),
+                                    Pair("xml", editorDisplayMap["xml"]!!.get()),
+                            ))
+                    )
+                }
+                item.putIfAbsent(panel, mutableMapOf(
+                        Pair("json", editorDisplayMap["json"]!!.get()),
+                        Pair("plainText", editorDisplayMap["plainText"]!!.get()),
+                        Pair("html", editorDisplayMap["html"]!!.get()),
+                        Pair("xml", editorDisplayMap["xml"]!!.get()),
+                ))
+                return@compute item
+            }
         }
 
-        fun disposePanel(panel: JPanel){
-            editorPanelMap[panel]?.forEach { _, editor ->
+        fun disposePanel(project: Project, panel: JPanel) {
+            editorProjectMap[project]?.get(panel)?.forEach{ _, editor ->
                 EditorFactory.getInstance().releaseEditor(editor)
             }
-            editorPanelMap[panel]?.clear()
+            editorProjectMap[project]?.get(panel)?.clear()
+            if (project.isDisposed) editorProjectMap[project]?.clear()
         }
 
         fun init(project: Project?) {

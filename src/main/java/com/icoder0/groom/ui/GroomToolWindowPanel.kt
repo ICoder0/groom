@@ -18,51 +18,16 @@ import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
  * @since  2021/4/17
  */
 @SuppressWarnings("LeakingThisInConstructor")
-abstract class GroomToolWindowPanel(var viewName: String, val project: Project, val toolWindow: ToolWindowEx) : SimpleToolWindowPanel(true), Disposable{
-
-    companion object {
-        val VIEW_NAME_KEY: DataKey<String> = DataKey.create("VIEW_NAME")
-        val attribute = mutableMapOf<Class<GroomToolWindowPanel>, Pair<AtomicInteger, TreeSet<String>>>()
-    }
+abstract class GroomToolWindowPanel(val project: Project, val toolWindow: ToolWindowEx) : SimpleToolWindowPanel(true), Disposable {
 
     init {
-        EditorManager.initPanel(this)
-        var index : AtomicInteger? = attribute[this.javaClass]?.first
-        var sortStack : TreeSet<String>? = attribute[this.javaClass]?.second
-        synchronized(this::class.java){
-            if (!attribute.containsKey(this::class.java)) {
-                index = AtomicInteger(1)
-                sortStack = sortedSetOf()
-                attribute[this.javaClass] = Pair(
-                        index!!, sortStack!!
-                )
-            }
-        }
-        with(sortStack!!){
-            viewName = if(isNotEmpty()) pollFirst()!!
-            else index!!.getAndIncrement().let {
-                return@let when(it){
-                    1 -> viewName
-                    else -> "$viewName($it)"
-                }
-            }
-        }
+        EditorManager.initPanel(project, this)
     }
 
     override fun dispose() {
-        attribute.get(this::class.java)!!.second.add(viewName)
-        this.removeAll()
+        removeAll()
+        removeNotify()
     }
 
     abstract fun initUI(): GroomToolWindowPanel
-
-    override fun getData(dataId: String): Any? {
-        if (project.isDisposed) {
-            return null
-        }
-        if (VIEW_NAME_KEY.`is`(dataId)){
-            return viewName
-        }
-        return null
-    }
 }
