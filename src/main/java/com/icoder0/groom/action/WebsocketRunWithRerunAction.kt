@@ -69,20 +69,7 @@ class WebsocketRunWithRerunAction : AnAction("", "asdasd", AllIcons.Actions.Star
             indicator.text = "Try to connect websocket..."
             indicator.isIndeterminate = true
             websocketClientView.fireWebsocketPreConnect()
-            val newWebsocketClient = WebsocketClientView.webSocketFactory.createSocket(URI.create(websocketClientView.wsClientAddress!!)).apply {
-                addListener(object : WebSocketAdapter() {
-                    override fun onTextMessage(websocket: WebSocket?, text: String?) {
-                        websocketClientView.fireMessageChanged(0, text)
-                    }
-
-                    override fun onDisconnected(websocket: WebSocket?, serverCloseFrame: WebSocketFrame?, clientCloseFrame: WebSocketFrame?, closedByServer: Boolean) {
-                        if (closedByServer) {
-                            NotificationManager.notify(project, NotificationType.ERROR, "closed by server internal error")
-                        }
-                        websocketClientView.fireWebsocketDisconnected()
-                    }
-                })
-            }
+            val newWebsocketClient = createWsClient(project, websocketClientView)
             try {
                 taskFuture = newWebsocketClient?.connect(Executors.newSingleThreadExecutor())
                 taskFuture?.get(5, TimeUnit.SECONDS)
@@ -118,7 +105,7 @@ class WebsocketRunWithRerunAction : AnAction("", "asdasd", AllIcons.Actions.Star
                 indicator.isIndeterminate = true
                 websocketClientView.fireWebsocketPreConnect()
                 websocketClientView.wsClient?.disconnect(0)
-                val recreateWsClient = websocketClientView.wsClient?.recreate()
+                val recreateWsClient = createWsClient(project, websocketClientView)
                 taskFuture = recreateWsClient?.connect(Executors.newSingleThreadExecutor())
                 taskFuture?.get(5, TimeUnit.SECONDS)
                 websocketClientView.fireWebsocketConnected(recreateWsClient)
@@ -127,6 +114,23 @@ class WebsocketRunWithRerunAction : AnAction("", "asdasd", AllIcons.Actions.Star
             } catch (e: Exception) {
                 NotificationManager.notify(project, NotificationType.ERROR, e.message)
             }
+        }
+    }
+
+    fun createWsClient(project: Project?, websocketClientView: WebsocketClientView): WebSocket? {
+        return WebsocketClientView.webSocketFactory.createSocket(URI.create(websocketClientView.wsClientAddress!!)).apply {
+            addListener(object : WebSocketAdapter() {
+                override fun onTextMessage(websocket: WebSocket?, text: String?) {
+                    websocketClientView.fireMessageChanged(0, text)
+                }
+
+                override fun onDisconnected(websocket: WebSocket?, serverCloseFrame: WebSocketFrame?, clientCloseFrame: WebSocketFrame?, closedByServer: Boolean) {
+                    if (closedByServer) {
+                        NotificationManager.notify(project, NotificationType.ERROR, "closed by server internal error")
+                    }
+                    websocketClientView.fireWebsocketDisconnected()
+                }
+            })
         }
     }
 }
