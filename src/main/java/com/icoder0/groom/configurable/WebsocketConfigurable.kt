@@ -1,39 +1,35 @@
 package com.icoder0.groom.configurable
 
-import com.fasterxml.jackson.databind.util.BeanUtil
 import com.icoder0.groom.component.WebsocketSettingsManager
-import com.icoder0.groom.ui.WebsocketClientView
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.JBSplitter
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.panel
-import com.intellij.util.ui.JBSwingUtilities
-import com.jetbrains.rd.framework.base.deepClonePolymorphic
-import com.sun.org.apache.xpath.internal.operations.Bool
 import icons.GroomIcons
-import org.codehaus.groovy.ast.tools.BeanUtils
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.DefaultListModel
-import javax.swing.DefaultListSelectionModel
-import javax.swing.JTextField
 import javax.swing.SwingConstants.LEADING
 
 /**
  * @author bofa1ex
  * @since  2021/5/14
  */
-class WebsocketConfigurable(selectedSettings: WebsocketSettingsManager.WebsocketConfigurationSetting?)
-    : BoundSearchableConfigurable("Websocket-Configurable", "", "Websocket-Configurable"
+class WebsocketConfigurable(
+        var selectedSettings: WebsocketSettingsManager.WebsocketConfigurationSetting?) : BoundSearchableConfigurable("Websocket-Configurable", "", "Websocket-Configurable"
 ) {
-
-    var selectedSettingsDup = selectedSettings.deepClonePolymorphic()
-    var allSettingsDup = WebsocketSettingsManager.allSettings.deepClonePolymorphic()
+    var selectedSettingsDup : WebsocketSettingsManager.WebsocketConfigurationSetting? = null
+    var allSettingsDup = mutableListOf<WebsocketSettingsManager.WebsocketConfigurationSetting>().apply {
+        for (setting in WebsocketSettingsManager.allSettings) {
+            val clone = setting.clone()
+            if (setting == selectedSettings){ selectedSettingsDup = clone }
+            add(clone)
+        }
+    }
 
     init {
         if (selectedSettingsDup == null && allSettingsDup.isEmpty()) {
@@ -71,8 +67,6 @@ class WebsocketConfigurable(selectedSettings: WebsocketSettingsManager.Websocket
             }
         }
     }
-
-
 
     override fun createPanel(): DialogPanel {
         nameTextField.addKeyListener(object : KeyAdapter() {
@@ -120,4 +114,5 @@ class WebsocketConfigurable(selectedSettings: WebsocketSettingsManager.Websocket
             }
         }.withPreferredSize(500, 300)
     }
+
 }
