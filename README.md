@@ -3,6 +3,8 @@
 ![Rating](https://img.shields.io/jetbrains/plugin/r/rating/com.icoder0.groom)
 ![Downloads](https://img.shields.io/jetbrains/plugin/d/com.icoder0.groom)
 
+<iframe frameborder="none" width="384px" height="319px" src="https://plugins.jetbrains.com/embeddable/card/16272"></iframe>
+
 ## Installation
 
 - Using IDE built-in plugin system:
@@ -20,6 +22,3 @@
 Plugin based on the [IntelliJ Platform Plugin Template][template].
 
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template
-
-![20210309110755079](https://user-images.githubusercontent.com/30573693/110412910-f14af200-80c7-11eb-86c4-e56d64205515.gif)
-
