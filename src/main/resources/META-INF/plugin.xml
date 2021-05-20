@@ -128,12 +128,18 @@
         <![CDATA[
       <ul>
         <li><b>1.0.5</b>
-            fix EditorManager#initPanel AlreadyDisposed Error.
-            feature: filter-action item-modified hint.
+            <ul>
+                <li>fix EditorManager#initPanel AlreadyDisposed Error.</li>
+                <li>fix ConfigurationSettings cancel action(modify directly) Error.</li>
+                <li>update configuration presentation longtext showing.</li>
+                <li>feature: filter-action item-modified hint.</li>
+            </ul>
         </li>
         <li><b>1.0.4</b>
-            change layout utilization multi-tabs(editor/client).
-            feature: ws-client(persisting configuration, filter TableView/EditorView).
+            <ul>
+                <li>change layout utilization multi-tabs(editor/client).</li>
+                <li>feature: ws-client(persisting configuration, filter TableView/EditorView).</li>
+            </ul>
         </li>
         <li><b>1.0.3</b> add more encode/decode actions(base64/md5/sha/hex/etc) in BasicEditorPopupMenu.</li>
         <li><b>1.0.2</b> add pluginIcon and editor actions such as compress/escape/etc.</li>

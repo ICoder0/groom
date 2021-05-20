@@ -1,5 +1,6 @@
 package com.icoder0.groom.action
 
+import com.google.common.base.Strings
 import com.icoder0.groom.component.WebsocketSettingsManager
 import com.icoder0.groom.configurable.WebsocketConfigurable
 import com.icoder0.groom.dialog.WebsocketManagerDialog
@@ -21,7 +22,7 @@ import javax.swing.JComponent
  * @author bofa1ex
  * @since  2021/5/18
  */
-class WebsocketRunConfigurationAction : ComboBoxAction(){
+class WebsocketRunConfigurationAction : ComboBoxAction() {
 
     var selectedSettingMap: MutableMap<WebsocketClientView, WebsocketSettingsManager.WebsocketConfigurationSetting?> = mutableMapOf()
 
@@ -45,7 +46,10 @@ class WebsocketRunConfigurationAction : ComboBoxAction(){
                            actionPlace: String,
                            selectedSetting: WebsocketSettingsManager.WebsocketConfigurationSetting?) {
         if (project != null && selectedSetting != null) {
-            presentation.setText(selectedSetting.name, false)
+            presentation.setText(
+                    if (selectedSetting.name.length > 10) selectedSetting.name.substring(0,7) + "..."
+                    else selectedSetting.name, false
+            )
             presentation.icon = GroomIcons.Socket
         } else {
             presentation.setText(ExecutionBundle.messagePointer("action.presentation.RunConfigurationsComboBoxAction.text"))
@@ -63,7 +67,6 @@ class WebsocketRunConfigurationAction : ComboBoxAction(){
         }
         return allActionsGroup
     }
-
 
 
     inner class ComboBoxInternalAction(val setting: WebsocketSettingsManager.WebsocketConfigurationSetting) : IconWithTextAction(setting.name, "", GroomIcons.Socket) {
