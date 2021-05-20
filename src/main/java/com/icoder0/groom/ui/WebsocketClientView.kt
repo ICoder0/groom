@@ -11,6 +11,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
@@ -18,6 +19,7 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ex.ToolWindowEx
+import com.intellij.ui.AnActionButton
 import com.intellij.ui.JBSplitter
 import com.intellij.ui.SearchTextField
 import com.intellij.ui.ToolbarDecorator
@@ -231,7 +233,11 @@ open class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : Gro
             listTableModel.addRow(MutableTriple.of(inputPair.first, if (inputPair.second) 0 else 1, LocalDateTime.now()))
         }.setRemoveAction {
             listTableModel.removeRow(selectedRow)
-        }.disableUpDownActions().createPanel()
+        }.addExtraAction(object : AnActionButton("", AllIcons.Actions.GC) {
+            override fun actionPerformed(e: AnActionEvent) {
+                listTableModel.items = mutableListOf()
+            }
+        }).disableUpDownActions().createPanel()
     }
 
     class TimeColumnInfo(name: String?) : ColumnInfo<Triple<String?, Int?, LocalDateTime?>, String>(name) {
