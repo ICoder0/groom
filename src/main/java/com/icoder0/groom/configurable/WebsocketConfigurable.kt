@@ -37,7 +37,7 @@ class WebsocketConfigurable(selectedSettings: WebsocketSettingsManager.Websocket
 
     init {
         if (selectedSettingsDup == null && allSettingsDup.isEmpty()) {
-            selectedSettingsDup = WebsocketSettingsManager.WebsocketConfigurationSetting("Uname")
+            selectedSettingsDup = WebsocketSettingsManager.WebsocketConfigurationSetting("Unnamed")
         }
     }
 
@@ -89,10 +89,10 @@ class WebsocketConfigurable(selectedSettings: WebsocketSettingsManager.Websocket
                 JBSplitter(false, 0.3f).apply {
                     firstComponent = ToolbarDecorator.createDecorator(allSettingsList)
                             .setAddAction {
-                                val newSettings = WebsocketSettingsManager.WebsocketConfigurationSetting("Uname")
+                                val newSettings = WebsocketSettingsManager.WebsocketConfigurationSetting("Unnamed")
                                 (allSettingsList.model as DefaultListModel).addElement(newSettings)
                                 allSettingsList.setSelectedValue(newSettings, true)
-                                nameTextField.text = "Uname"; addressTextField.text = ""
+                                nameTextField.text = "Unnamed"; addressTextField.text = ""
                             }
                             .setRemoveAction {
                                 val removeElement = (allSettingsList.model as DefaultListModel).elementAt((it.contextComponent as JBList<*>).selectedIndex)

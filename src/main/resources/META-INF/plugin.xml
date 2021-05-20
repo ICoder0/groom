@@ -138,7 +138,7 @@
         <li><b>1.0.4</b>
             <ul>
                 <li>change layout utilization multi-tabs(editor/client).</li>
-                <li>feature: ws-client(persisting configuration, filter TableView/EditorView).</li>
+                <li>feature: ws-client(persisting configuration, filter TableView/EditorView, extra-action gc TableView#items).</li>
             </ul>
         </li>
         <li><b>1.0.3</b> add more encode/decode actions(base64/md5/sha/hex/etc) in BasicEditorPopupMenu.</li>
