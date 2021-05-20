@@ -133,13 +133,9 @@ open class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : Gro
             setContent(panel {
                 row {
                     cell {
-                        createActionToolbar(
-                                "WebsocketViewMainToolbar",
-                                getAction("WebsocketView.MainToolbar") as ActionGroup,
-                                true
-                        ).apply {
+                        createActionToolbar("WebsocketViewMainToolbar", getAction("WebsocketView.MainToolbar") as ActionGroup, true).apply {
                             setTargetComponent(this@WebsocketClientView)
-                        }.component(growX, pushX)
+                        }.component(growX)
                     }
                     right { wsSearchTextField(growX) }
                 }
