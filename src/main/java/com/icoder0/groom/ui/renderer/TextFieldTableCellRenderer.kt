@@ -13,7 +13,7 @@ import javax.swing.table.TableCellRenderer
  */
 class TextFieldTableCellRenderer : TableCellRenderer {
     override fun getTableCellRendererComponent(table: JTable, value: Any, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-        val text = StringUtils.replace(value as String, "\n", "↵")
+        val text = StringUtils.replace(value as String?, "\n", "↵")
         val comp = JTextField(text)
         if (isSelected && table.selectedColumn == column) {
             comp.foreground = table.selectionForeground
