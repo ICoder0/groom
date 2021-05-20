@@ -96,7 +96,7 @@ class WebsocketRunConfigurationAction : ComboBoxAction() {
                         // update selected configuration.
                         selectedSettingsDup?.name = nameTextField.text
                         selectedSettingsDup?.address = addressTextField.text
-                        selectedSettingMap[websocketClientView!!] = selectedSettingsDup!!
+                        selectedSettingMap[websocketClientView!!] = selectedSettingsDup
                         configurable.disposeUIResources()
                     }
                     super.doOKAction()

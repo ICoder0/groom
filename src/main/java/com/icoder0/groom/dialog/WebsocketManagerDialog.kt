@@ -15,6 +15,7 @@ import javax.swing.DefaultListModel
  */
 open class WebsocketManagerDialog(project: Project?, selectedSetting: WebsocketSettingsManager.WebsocketConfigurationSetting?
 ) : SingleConfigurableEditor(project, WebsocketConfigurable(selectedSetting), "Websocket-Configurable-DimensionKey", false) {
+
     init {
         this.title = "Websocket Configuration"
     }
@@ -41,7 +42,7 @@ open class WebsocketManagerDialog(project: Project?, selectedSetting: WebsocketS
                 return ValidationInfo("Wrong specification + [" + element.address + "]", addressTextField)
             }
             if (addressTextField.text.isEmpty()){
-                return ValidationInfo("RequestURL must not be null", addressTextField)
+                return null
             }
             if (addressTextField.text.matches(Regex("^(ws|wss)://([a-zA-Z][a-zA-Z0-9_]*[.]?)+(:\\d{1,4})?(\\/[a-zA-Z0-9_]+)*(\\?[a-zA-Z0-9_]+)*(=[a-zA-Z0-9_&]+)*\$"))) {
                 return null
