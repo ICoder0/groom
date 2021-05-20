@@ -3,8 +3,6 @@
 ![Rating](https://img.shields.io/jetbrains/plugin/r/rating/com.icoder0.groom)
 ![Downloads](https://img.shields.io/jetbrains/plugin/d/com.icoder0.groom)
 
-<iframe frameborder="none" width="384px" height="319px" src="https://plugins.jetbrains.com/embeddable/card/16272"></iframe>
-
 ## Installation
 
 - Using IDE built-in plugin system:
