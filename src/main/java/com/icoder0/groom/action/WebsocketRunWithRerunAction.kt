@@ -1,7 +1,7 @@
 package com.icoder0.groom.action
 
-import com.icoder0.groom.component.NotificationManager
 import com.icoder0.groom.ui.WebsocketClientView
+import com.icoder0.groom.util.IdeUtils
 import com.intellij.icons.AllIcons
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
@@ -9,8 +9,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.MessageType
 import com.neovisionaries.ws.client.WebSocket
 import com.neovisionaries.ws.client.WebSocketAdapter
 import com.neovisionaries.ws.client.WebSocketFrame
@@ -60,24 +60,22 @@ class WebsocketRunWithRerunAction : AnAction("", "asdasd", AllIcons.Actions.Star
 
         override fun run(indicator: ProgressIndicator) {
             if (websocketClientView?.wsClientAddress == null || websocketClientView.wsClientAddress?.isEmpty()!!) {
-                NotificationManager.notify(project, NotificationType.WARNING,
-                        "Websocket RunConfiguration/RequestURL is Empty." +
-                                "\tTry to create/fill it."
-                )
+                IdeUtils.notify("Websocket RunConfiguration/RequestURL is Empty." +
+                        "\tTry to create/fill it.", MessageType.WARNING)
                 return
             }
             indicator.text = "Try to connect websocket..."
             indicator.isIndeterminate = true
             websocketClientView.fireWebsocketPreConnect()
-            val newWebsocketClient = createWsClient(project, websocketClientView)
+            val newWebsocketClient = createWsClient(websocketClientView)
             try {
                 taskFuture = newWebsocketClient?.connect(Executors.newSingleThreadExecutor())
                 taskFuture?.get(5, TimeUnit.SECONDS)
                 websocketClientView.fireWebsocketConnected(newWebsocketClient)
             } catch (e: ProcessCanceledException) {
-                NotificationManager.notify(project, NotificationType.ERROR, "Cancel Task Manually: %s".format(e.message))
+                IdeUtils.notify("Cancel Task Manually: %s".format(e.message), MessageType.ERROR)
             } catch (e: Exception) {
-                NotificationManager.notify(project, NotificationType.ERROR, e.message)
+                IdeUtils.notify(e.message ?: e::javaClass.name, MessageType.ERROR)
             }
         }
 
@@ -105,19 +103,19 @@ class WebsocketRunWithRerunAction : AnAction("", "asdasd", AllIcons.Actions.Star
                 indicator.isIndeterminate = true
                 websocketClientView.fireWebsocketPreConnect()
                 websocketClientView.wsClient?.disconnect(0)
-                val recreateWsClient = createWsClient(project, websocketClientView)
+                val recreateWsClient = createWsClient(websocketClientView)
                 taskFuture = recreateWsClient?.connect(Executors.newSingleThreadExecutor())
                 taskFuture?.get(5, TimeUnit.SECONDS)
                 websocketClientView.fireWebsocketConnected(recreateWsClient)
             } catch (e: ProcessCanceledException) {
-                NotificationManager.notify(project, NotificationType.ERROR, "Cancel Task Manually: %s".format(e.message))
+                IdeUtils.notify("Cancel Task Manually: %s".format(e.message), MessageType.ERROR)
             } catch (e: Exception) {
-                NotificationManager.notify(project, NotificationType.ERROR, e.message)
+                IdeUtils.notify(e.message ?: e::javaClass.name, MessageType.ERROR)
             }
         }
     }
 
-    fun createWsClient(project: Project?, websocketClientView: WebsocketClientView): WebSocket? {
+    fun createWsClient(websocketClientView: WebsocketClientView): WebSocket? {
         return WebsocketClientView.webSocketFactory.createSocket(URI.create(websocketClientView.wsClientAddress!!)).apply {
             addListener(object : WebSocketAdapter() {
                 override fun onTextMessage(websocket: WebSocket?, text: String?) {
@@ -126,7 +124,7 @@ class WebsocketRunWithRerunAction : AnAction("", "asdasd", AllIcons.Actions.Star
 
                 override fun onDisconnected(websocket: WebSocket?, serverCloseFrame: WebSocketFrame?, clientCloseFrame: WebSocketFrame?, closedByServer: Boolean) {
                     if (closedByServer) {
-                        NotificationManager.notify(project, NotificationType.ERROR, "closed by server internal error")
+                        IdeUtils.notify("closed by server internal error", MessageType.ERROR)
                     }
                     websocketClientView.fireWebsocketDisconnected()
                 }

@@ -6,6 +6,7 @@ import com.icoder0.groom.ui.renderer.EditorExTableCellEditor
 import com.icoder0.groom.ui.renderer.IconRendererEx
 import com.icoder0.groom.ui.renderer.ObjectRendererEx
 import com.icoder0.groom.ui.renderer.TextFieldTableCellRenderer
+import com.icoder0.groom.util.IdeUtils
 import com.intellij.execution.runners.ExecutionUtil
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
@@ -16,6 +17,7 @@ import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ex.ToolWindowEx
@@ -89,6 +91,10 @@ open class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : Gro
                 popupIcon = ExecutionUtil.getLiveIndicator(icon)
             }
         }
+        IdeUtils.notify((
+                if (wsClientAddress?.length ?: -1 > 20) wsClientAddress?.substring(0, 20) + "{...}"
+                else wsClientAddress) + " is Connected", MessageType.INFO
+        )
     }
 
     open fun fireMessageChanged(type: Int, message: String?) {
