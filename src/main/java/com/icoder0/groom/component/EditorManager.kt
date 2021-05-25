@@ -37,6 +37,9 @@ open class EditorManager {
         }
 
         fun initPanel(project: Project, panel: JPanel) {
+            if (project.isDisposed){
+                return
+            }
             editorProjectMap.putIfAbsent(project, HashMap())
             editorProjectMap.compute(project) { _, item ->
                 if (item == null){
@@ -50,17 +53,17 @@ open class EditorManager {
                     )
                 }
                 item.putIfAbsent(panel, mutableMapOf(
-                        Pair("json", editorDisplayMap["json"]!!.get()),
-                        Pair("plainText", editorDisplayMap["plainText"]!!.get()),
-                        Pair("html", editorDisplayMap["html"]!!.get()),
-                        Pair("xml", editorDisplayMap["xml"]!!.get()),
+                    Pair("json", editorDisplayMap["json"]!!.get()),
+                    Pair("plainText", editorDisplayMap["plainText"]!!.get()),
+                    Pair("html", editorDisplayMap["html"]!!.get()),
+                    Pair("xml", editorDisplayMap["xml"]!!.get()),
                 ))
                 return@compute item
             }
         }
 
         fun disposePanel(project: Project, panel: JPanel) {
-            editorProjectMap[project]?.get(panel)?.forEach{ _, editor ->
+            editorProjectMap[project]?.get(panel)?.forEach{ (_, editor) ->
                 EditorFactory.getInstance().releaseEditor(editor)
             }
             editorProjectMap[project]?.get(panel)?.clear()
