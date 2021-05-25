@@ -14,7 +14,7 @@ import org.jdom.Element
  * @since  2021/5/17
  */
 @State(name = "ConfigProviderState", storages = [Storage(
-        "$APP_CONFIG\$/configProvider.xml",
+        "$APP_CONFIG/configProvider.xml",
         roamingType = RoamingType.DISABLED)
 ])
 class WebsocketSettingsManager : PersistentStateComponent<Element> {
