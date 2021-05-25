@@ -8,15 +8,11 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.editor.ScrollType
-import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.ui.LanguageTextField.DocumentCreator
 import com.intellij.ui.LanguageTextField.SimpleDocumentCreator
 import java.util.function.Supplier
 import javax.swing.JPanel
-import javax.swing.ScrollPaneConstants
 
 /**
  * @author bofa1ex
@@ -37,10 +33,13 @@ open class EditorManager {
         }
 
         fun initPanel(project: Project, panel: JPanel) {
-            if (project.isDisposed){
-                return
+            kotlin.run {
+                for (projectEx in editorProjectMap.keys) {
+                    if (projectEx.isDisposed){
+                        editorProjectMap.remove(projectEx)
+                    }
+                }
             }
-            editorProjectMap.putIfAbsent(project, HashMap())
             editorProjectMap.compute(project) { _, item ->
                 if (item == null){
                     return@compute mutableMapOf(
