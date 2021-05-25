@@ -29,13 +29,15 @@ class WebsocketRunConfigurationAction : ComboBoxAction() {
     override fun update(e: AnActionEvent) {
         val presentation = e.presentation
         val project = e.getData(CommonDataKeys.PROJECT)
-        val clientView = e.getData(WebsocketClientView.WEBSOCKET_VIEW_KEY)
-        val selectedSetting = selectedSettingMap.get(clientView)
+        val clientView = e.getData(WebsocketClientView.WEBSOCKET_VIEW_KEY) as WebsocketClientView
+        val selectedSetting = selectedSettingMap.getOrPut(clientView,
+                {WebsocketSettingsManager.allSettings.firstOrNull()}
+        )
         if (project == null || project.isDisposed || !project.isOpen) {
             updatePresentation(null, presentation, e.place, selectedSetting)
             presentation.isEnabled = false
         } else {
-            clientView?.wsClientAddress = selectedSetting?.address
+            clientView.wsClientAddress = selectedSetting?.address
             updatePresentation(project, presentation, e.place, selectedSetting)
             presentation.isEnabled = true
         }

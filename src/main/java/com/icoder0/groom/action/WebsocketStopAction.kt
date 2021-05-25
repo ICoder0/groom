@@ -1,16 +1,14 @@
 package com.icoder0.groom.action
 
-import com.icoder0.groom.component.NotificationManager
 import com.icoder0.groom.ui.WebsocketClientView
-import com.intellij.notification.NotificationType
+import com.icoder0.groom.util.IdeUtils
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.MessageType
 import com.neovisionaries.ws.client.WebSocket
-import com.neovisionaries.ws.client.WebSocketException
 
 /**
  * @author bofa1ex
@@ -35,7 +33,7 @@ class WebsocketStopAction : DumbAwareAction() {
             try {
                 websocketClient?.disconnect(0)
             } catch (e: Exception) {
-                NotificationManager.notify(project, NotificationType.ERROR, e.message)
+                IdeUtils.notify(e.message?:e::javaClass.name, MessageType.ERROR)
             }
         }
     }
