@@ -152,6 +152,13 @@
     <change-notes>
         <![CDATA[
       <ul>
+        <li><b>1.0.6</b>
+            <ul>
+                <li>fix using balloon popup to replace deprecated notification-api since 203.8084.24(2020.3.4).</li>
+                <li>fix Editor#init project#alreadyDisposed error.</li>
+                <li>feature add json inspection(expand jsonPrimitive#stringLiteral nested json).</li>
+                <li>optimize ui (toolbar, composite-language-comboBox, etc)</li>
+            </ul>
         <li><b>1.0.5</b>
             <ul>
                 <li>fix EditorManager#initPanel AlreadyDisposed Error.</li>
