@@ -7,13 +7,8 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.util.ElementsChooser
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.ui.layout.applyToComponent
-import com.intellij.ui.layout.panel
-import com.jetbrains.rd.util.getOrCreate
 import java.util.function.UnaryOperator
-import javax.swing.JPanel
 
 /**
  * @author bofa1ex
@@ -21,24 +16,21 @@ import javax.swing.JPanel
  */
 class WebsocketPanelViewFilterAction : DumbAwareAction() {
 
-    var isModify = mutableMapOf<WebsocketClientView, Boolean>()
-
     companion object FilterObjectKind {
         const val TABLE_VIEW = "Table View"
         const val EDITOR_VIEW = "Editor View"
     }
 
     override fun update(e: AnActionEvent) {
-        val websocketClientView: WebsocketClientView? = e.getData<WebsocketClientView>(WebsocketClientView.WEBSOCKET_VIEW_KEY)
+        val isModify = e.getData(WebsocketClientView.IS_PANEL_VIEW_MODIFY_KEY)
         e.presentation.text = "Filter TableView/EditorView"
-        e.presentation.icon = if(isModify.getOrPut(websocketClientView!!, {false}))
-            ExecutionUtil.getLiveIndicator(AllIcons.General.Filter)
+        e.presentation.icon = if(isModify?:false) ExecutionUtil.getLiveIndicator(AllIcons.General.Filter)
         else AllIcons.General.Filter
     }
 
 
     override fun actionPerformed(e: AnActionEvent) {
-        val websocketClientView: WebsocketClientView? = e.getData<WebsocketClientView>(WebsocketClientView.WEBSOCKET_VIEW_KEY)
+        val websocketClientView: WebsocketClientView? = e.getData(WebsocketClientView.WEBSOCKET_VIEW_KEY)
         val chooser = websocketClientView?.let {
             ChooserManager.getViewChooser(it, UnaryOperator { t ->
                 t.addElementsMarkListener(ElementsChooser.ElementsMarkListener { element, isMarked ->
@@ -50,7 +42,7 @@ class WebsocketPanelViewFilterAction : DumbAwareAction() {
                         TABLE_VIEW -> websocketClientView.fireToggleTableView(isMarked)
                         EDITOR_VIEW -> websocketClientView.fireToggleEditor(isMarked)
                     }
-                    isModify.put(websocketClientView, t.markedElements.size != 2)
+                    websocketClientView.firePanelViewModify(t.markedElements.size != 2)
                 })
                 return@UnaryOperator t
             })

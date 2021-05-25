@@ -16,18 +16,15 @@ import java.util.function.UnaryOperator
  */
 class WebsocketTableViewFilterAction : DumbAwareAction() {
 
-    var isModify = mutableMapOf<WebsocketClientView, Boolean>()
-
     companion object FilterObjectKind {
         const val INBOUND = "Inbound"
         const val OUTBOUND = "Outbound"
     }
 
     override fun update(e: AnActionEvent) {
-        val websocketClientView: WebsocketClientView? = e.getData<WebsocketClientView>(WebsocketClientView.WEBSOCKET_VIEW_KEY)
+        val isModify = e.getData(WebsocketClientView.IS_TABLE_VIEW_MODIFY_KEY)
         e.presentation.text = "Filter Inbound/Outbound message"
-        e.presentation.icon = if(isModify.getOrPut(websocketClientView!!, {false}))
-            ExecutionUtil.getLiveIndicator(AllIcons.General.Filter)
+        e.presentation.icon = if(isModify?:false) ExecutionUtil.getLiveIndicator(AllIcons.General.Filter)
         else AllIcons.General.Filter
     }
 
@@ -40,7 +37,7 @@ class WebsocketTableViewFilterAction : DumbAwareAction() {
                         t.setElementMarked(element, true)
                         return@ElementsMarkListener
                     }
-                    isModify.put(websocketClientView, t.markedElements.size != 2)
+                    websocketClientView.fireTableViewModify(t.markedElements.size != 2)
                     if (t.markedElements.size == 2) {
                         websocketClientView.firePayloadFilter(WebsocketClientView.allType, websocketClientView.wsPayloadMatch)
                         return@ElementsMarkListener
