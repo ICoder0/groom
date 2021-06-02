@@ -72,28 +72,5 @@ class WebsocketCommitAction : DumbAwareAction("", "", AllIcons.Actions.Commit), 
     override fun actionPerformed(e: AnActionEvent) {
         val websocketClientView = e.getData(WebsocketClientView.WEBSOCKET_VIEW_KEY)
         websocketClientView?.fireCommit()
-//        with(e.presentation.getClientProperty(CustomComponentAction.COMPONENT_KEY)) {
-//            this?.isEnabled = isCommitEnable
-//            this?.isVisible = isCommitVisible
-//        }
     }
-//
-//    override fun update(e: AnActionEvent) {
-//        val isCommitEnable = e.getRequiredData(WebsocketClientView.IS_COMMIT_ENABLE_KEY)
-//        val isCommitVisible = e.getRequiredData(WebsocketClientView.IS_COMMIT_VISIBLE_KEY)
-//        with(e.presentation.getClientProperty(CustomComponentAction.COMPONENT_KEY)) {
-//            this?.isEnabled = isCommitEnable
-//            this?.isVisible = isCommitVisible
-//        }
-//    }
-//
-//
-//    override fun createCustomComponent(presentation: Presentation, place: String): JComponent {
-//        return JButton(AllIcons.Actions.Commit).apply {
-//            addActionListener {
-//                presentation
-//            }
-//            isEnabled = false
-//        }
-//    }
 }

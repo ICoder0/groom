@@ -62,6 +62,10 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
     var isCommitEnable = false
     var isCommitVisible = true
 
+    /** EditorLanguageComboBox#DataKey */
+    var isEditorVisible = true
+
+
     var wsClientAddress: String? = null
     var wsClient: WebSocket? = null
     var wsPayloadMatch: String? = null
@@ -82,6 +86,9 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
         const val allType = -1
     }
 
+    override fun getEditorVisible(): Boolean {
+        return isEditorVisible
+    }
 
     override fun fireEditorLanguageChanged(language: String, icon: Icon) {
         selectedIcon = icon; selectedName = language
@@ -122,8 +129,8 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
 
     fun fireToggleEditor(isMarked: Boolean) {
         wsRequestEditorWrapperPanel.isVisible = isMarked
-        languageComboBox.isVisible = isMarked
         isCommitVisible = isMarked
+        isEditorVisible = isMarked
     }
 
     fun fireWebsocketPreConnect() {
@@ -244,12 +251,6 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
                 addCurrentTextToHistory()
             }
             return super.preprocessEventForTextField(e)
-        }
-    }
-
-    private var languageComboBox = ComboBox(arrayOf("json", "xml", "html", "plainText")).apply {
-        this.addActionListener {
-
         }
     }
 
