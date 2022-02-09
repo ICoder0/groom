@@ -22,6 +22,7 @@ class EditorLanguageComboBoxAction : ComboBoxAction() {
         val project = e.getData(CommonDataKeys.PROJECT)
         val selectedIcon = e.getData(CompositeEditorDataKey.SELECTED_ICON)
         val selectedName = e.getData(CompositeEditorDataKey.SELECTED_NAME)
+        val isEditorVisible = e.getRequiredData(CompositeEditorDataKey.IS_EDITOR_VISIBLE_KEY)
         if (project == null || project.isDisposed || !project.isOpen) {
             presentation.isEnabled = false
             presentation.text = "Unknown"
@@ -31,6 +32,7 @@ class EditorLanguageComboBoxAction : ComboBoxAction() {
             presentation.icon = selectedIcon
             presentation.isEnabled = true
         }
+        presentation.isVisible = isEditorVisible
     }
 
     override fun createPopupActionGroup(button: JComponent?): DefaultActionGroup {

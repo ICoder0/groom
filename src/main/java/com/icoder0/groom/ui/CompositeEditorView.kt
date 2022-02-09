@@ -78,6 +78,10 @@ class CompositeEditorView(project: Project, toolWindow: ToolWindowEx) : GroomToo
 
     var editorWrapperPanel = simplePanel()
 
+    override fun getEditorVisible(): Boolean {
+        return true
+    }
+
     override fun fireEditorLanguageChanged(language: String, icon: Icon) {
         selectedIcon = icon; selectedName = language
         val oldText: String = editor.document.text

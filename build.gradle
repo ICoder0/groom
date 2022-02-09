@@ -5,10 +5,9 @@ plugins {
 }
 
 group 'com.icoder0'
-version '1.0.6'
+version '1.1.0'
 
 repositories {
-    maven { url 'https://maven.aliyun.com/repository/public' }
     mavenCentral()
 }
 
@@ -19,7 +18,9 @@ dependencies {
 }
 
 intellij {
-    version '2020.2.1'
+    version = '2020.2.1'
+    sandboxDirectory = "${project.rootDir}/.sandbox"
+    updateSinceUntilBuild = false
 }
 
 compileKotlin {
@@ -29,14 +30,3 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
-
-patchPluginXml {
-    sinceBuild sinceBuildVersion
-    untilBuild untilBuildVersion
-
-    def description = "${project.buildDir}/html/plugin.html"
-    if (file(description).exists()) {
-        pluginDescription(file(description).text)
-    }
-}
-

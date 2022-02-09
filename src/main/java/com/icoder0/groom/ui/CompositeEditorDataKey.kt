@@ -10,11 +10,16 @@ import javax.swing.Icon
  */
 interface CompositeEditorDataKey : DataProvider {
 
+    fun getEditorVisible() : Boolean
+
     fun fireEditorLanguageChanged(language: String, icon: Icon)
 
     override fun getData(dataId: String): Any? {
         if (COMPOSITE_EDITOR_KEY.`is`(dataId)) {
             return this
+        }
+        if (IS_EDITOR_VISIBLE_KEY.`is`(dataId)){
+            return getEditorVisible()
         }
         return null
     }
@@ -28,5 +33,8 @@ interface CompositeEditorDataKey : DataProvider {
 
         @JvmStatic
         val SELECTED_ICON: DataKey<Icon> = DataKey.create("SELECTED_ICON")
+
+        @JvmStatic
+        val IS_EDITOR_VISIBLE_KEY: DataKey<Boolean> = DataKey.create("IS_EDITOR_VISIBLE_KEY")
     }
 }

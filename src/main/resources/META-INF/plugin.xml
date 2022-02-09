@@ -7,10 +7,14 @@
 
     <!--    Leave this in here so the IDE gives you feedback on-->
     <!--    What APIs are available-->
-    <idea-version since-build="201.6668.113"/>
+    <idea-version since-build="182.5262.2"/>
 
     <description><![CDATA[
-         multi-tab with ws-client/composite-language-editor(escape/compress/encode/decode/etc).
+        Toolbox for coder
+        <ul>
+          <li>json/xml/html/plain editor which actions include (expand/escape/compress/encode/decode/etc)</li>
+          <li>webSocket client which is support store conf and read/write packet easily</li>
+        </ul>
     ]]></description>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -18,7 +22,6 @@
         <localInspection groupName="Groom" shortName="expandNestedJSON" displayName="Expand Nested JSON" level="WARNING"
                          language="JSON" enabledByDefault="true"
                          implementationClass="com.icoder0.groom.inspection.NestedJsonInspection"/>
-        <!--        <completion.contributor language="JSON" implementationClass="com.icoder0.groom.language.SimpleCompletionContributor"/>-->
         <toolWindow id="Groom" secondary="true" anchor="right" icon="GroomIcons.Logo"
                     factoryClass="com.icoder0.groom.GroomToolWindowFactory"
                     canCloseContents="true"/>
@@ -120,12 +123,6 @@
                     description="Encode SHA3-512 selected text."/>
             <separator/>
         </group>
-<!--        <action id="JsonEditorBasics.TestAction" class="com.icoder0.groom.action.EditorJsonUniqueAction"-->
-<!--                text="Json Unique"-->
-<!--                description="Json unique action"-->
-<!--                icon="GroomIcons.Escape">-->
-<!--            <add-to-group group-id="BasicEditorPopupMenu" anchor="last"/>-->
-<!--        </action>-->
         <action id="EditorBasics.EditorEscapeAction"
                 class="com.icoder0.groom.action.EditorEscapeAction"
                 text="Escape"
@@ -152,6 +149,7 @@
     <change-notes>
         <![CDATA[
       <ul>
+        <li><b>1.1.0</b> upgrade ide version 2021.2.3 in compatibility </li>
         <li><b>1.0.6</b>
             <ul>
                 <li>fix using balloon popup to replace deprecated notification-api since 203.8084.24(2020.3.4).</li>
