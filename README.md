@@ -4,7 +4,7 @@
 ![Downloads](https://img.shields.io/jetbrains/plugin/d/com.icoder0.groom)
 
 ## Installation
-
+- Download from https://plugins.jetbrains.com/plugin/16272-groom
 - Using IDE built-in plugin system:
   
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "groom"</kbd> >
