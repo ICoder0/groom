@@ -3,19 +3,14 @@ package com.icoder0.groom.action
 import com.icoder0.groom.ui.WebsocketClientView
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionToolbar
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.ui.AnActionButton
 import com.intellij.ui.ComponentUtil
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.JButtonAction
-import com.intellij.util.ui.UIUtil
 import javax.swing.JButton
 import javax.swing.JComponent
 
@@ -37,7 +32,7 @@ class WebsocketCommitAction : DumbAwareAction("", "", AllIcons.Actions.Commit), 
                 val action = this
                 val event = AnActionEvent.createFromInputEvent(null, place, presentation, dataContext)
                 if (ActionUtil.lastUpdateAndCheckDumb(action, event, true)) {
-                    ActionUtil.performActionDumbAware(action, event)
+                    action.actionPerformed(event)
                 }
             }
         }
