@@ -33,7 +33,7 @@ class WebsocketRunWithRerunAction : AnAction("", "asdasd", AllIcons.Actions.Star
         }
         when (websocketClientView.wsClient?.isOpen) {
             true -> e.presentation.icon = AllIcons.Actions.Restart
-            false -> e.presentation.icon = AllIcons.Actions.StartDebugger
+            null, false -> e.presentation.icon = AllIcons.Actions.StartDebugger
         }
     }
 

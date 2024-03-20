@@ -33,7 +33,7 @@ class WebsocketSettingsManager : PersistentStateComponent<Element> {
         }
     }
 
-    override fun getState(): Element? {
+    override fun getState(): Element {
         val state: Element = XmlSerializer.serialize(this)
         for (setting in allSettings) {
             val content = Element("setting")

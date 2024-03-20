@@ -22,7 +22,7 @@ open class WebsocketManagerDialog(project: Project?, selectedSetting: WebsocketS
     }
 
     override fun doHelpAction() {
-        IdeUtils.notify("Input RequestURL\n e.g. ws://{ws.server.ip/domain}:{ws.server.port}/{path}", MessageType.INFO)
+        IdeUtils.notify("Input RequestURL\n e.g. wss://example.com:8080/path?query=value#fragment", MessageType.INFO)
     }
 
     override fun doValidate(): ValidationInfo? {
@@ -31,11 +31,7 @@ open class WebsocketManagerDialog(project: Project?, selectedSetting: WebsocketS
                 if (element.address.isEmpty()){
                     continue
                 }
-                if (element.address.matches(Regex("^(ws|wss)://([a-zA-Z][a-zA-Z0-9_]*[.]?)+(:\\d{1,4})?(\\/[a-zA-Z0-9_]+)*(\\?[a-zA-Z0-9_]+)*(=[a-zA-Z0-9_&]+)*\$"))) {
-                    continue
-                }
-
-                if (element.address.matches(Regex("^(ws|wss)://((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}(:\\d{1,4})?(\\/[a-zA-Z0-9_]+)*\$"))) {
+                if (element.address.matches(Regex("^(wss?://)([^:/]+)(:\\d+)?(/[^?#]*)?(\\?[^#]*)?(#.*)?\$"))) {
                     continue
                 }
                 return ValidationInfo("Wrong specification + [" + element.address + "]", addressTextField)
@@ -43,10 +39,7 @@ open class WebsocketManagerDialog(project: Project?, selectedSetting: WebsocketS
             if (addressTextField.text.isEmpty()){
                 return null
             }
-            if (addressTextField.text.matches(Regex("^(ws|wss)://([a-zA-Z][a-zA-Z0-9_]*[.]?)+(:\\d{1,4})?(\\/[a-zA-Z0-9_]+)*(\\?[a-zA-Z0-9_]+)*(=[a-zA-Z0-9_&]+)*\$"))) {
-                return null
-            }
-            if (addressTextField.text.matches(Regex("^(ws|wss)://((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}(:\\d{1,4})?(\\/[a-zA-Z0-9_]+)*\$"))) {
+            if (addressTextField.text.matches(Regex("^(wss?://)([^:/]+)(:\\d+)?(/[^?#]*)?(\\?[^#]*)?(#.*)?\$"))) {
                 return null
             }
             return ValidationInfo("Wrong specification + [" + addressTextField.text + "]", addressTextField)

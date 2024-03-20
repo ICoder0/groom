@@ -1,6 +1,7 @@
 package com.icoder0.groom.action
 
 import com.icoder0.groom.ui.CompositeEditorDataKey
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -16,6 +17,10 @@ import javax.swing.JComponent
  * @since  2021/5/24
  */
 class EditorLanguageComboBoxAction : ComboBoxAction() {
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
 
     override fun update(e: AnActionEvent) {
         val presentation = e.presentation

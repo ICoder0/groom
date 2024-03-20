@@ -1,6 +1,5 @@
 package com.icoder0.groom.action
 
-import com.google.common.base.Strings
 import com.icoder0.groom.component.WebsocketSettingsManager
 import com.icoder0.groom.configurable.WebsocketConfigurable
 import com.icoder0.groom.dialog.WebsocketManagerDialog
@@ -23,6 +22,9 @@ import javax.swing.JComponent
  * @since  2021/5/18
  */
 class WebsocketRunConfigurationAction : ComboBoxAction() {
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
 
     var selectedSettingMap: MutableMap<WebsocketClientView, WebsocketSettingsManager.WebsocketConfigurationSetting?> = mutableMapOf()
 

@@ -23,12 +23,12 @@ open class ChooserManager {
         val viewChooserDisplaySupplier: Supplier<ElementsChooser<String?>> = Supplier {
             return@Supplier object : ElementsChooser<String?>(true) {}.apply {
                 addElement(TABLE_VIEW, true, object : MultiStateElementsChooser.ElementProperties {
-                    override fun getIcon(): Icon? {
+                    override fun getIcon(): Icon {
                         return AllIcons.Nodes.Type
                     }
                 })
                 addElement(EDITOR_VIEW, true, object : MultiStateElementsChooser.ElementProperties {
-                    override fun getIcon(): Icon? {
+                    override fun getIcon(): Icon {
                         return AllIcons.Nodes.Enum
                     }
                 })
@@ -41,12 +41,12 @@ open class ChooserManager {
         val payloadChooserDisplaySupplier: Supplier<ElementsChooser<String?>> = Supplier {
             return@Supplier object : ElementsChooser<String?>(true) {}.apply {
                 addElement(INBOUND, true, object : MultiStateElementsChooser.ElementProperties {
-                    override fun getIcon(): Icon? {
+                    override fun getIcon(): Icon {
                         return AllIcons.Ide.IncomingChangesOn
                     }
                 })
                 addElement(OUTBOUND, true, object : MultiStateElementsChooser.ElementProperties {
-                    override fun getIcon(): Icon? {
+                    override fun getIcon(): Icon {
                         return AllIcons.Ide.OutgoingChangesOn
                     }
                 })

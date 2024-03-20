@@ -4,6 +4,7 @@ import com.icoder0.groom.ui.WebsocketClientView
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionToolbar
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -19,6 +20,10 @@ import javax.swing.JComponent
  * @since  2021/5/25
  */
 class WebsocketCommitAction : DumbAwareAction("", "", AllIcons.Actions.Commit), CustomComponentAction {
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
 
     override fun createCustomComponent(presentation: Presentation, place: String): JComponent {
         val button = JButton().apply {

@@ -2,6 +2,7 @@ package com.icoder0.groom.action
 
 import com.icoder0.groom.ui.WebsocketClientView
 import com.icoder0.groom.util.IdeUtils
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
@@ -15,6 +16,10 @@ import com.neovisionaries.ws.client.WebSocket
  * @since  2021/5/6
  */
 class WebsocketStopAction : DumbAwareAction() {
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
+
     override fun actionPerformed(e: AnActionEvent) {
         val websocketClientView = e.getData(WebsocketClientView.WEBSOCKET_VIEW_KEY)
         WebsocketStopTask(e.project, websocketClientView?.wsClient).queue()

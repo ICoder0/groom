@@ -2,7 +2,6 @@ package com.icoder0.groom.ui
 
 import com.icoder0.groom.component.EditorManager
 import com.icoder0.groom.component.EditorManager.EditorManagerInternal.disposePanel
-import com.icoder0.groom.ui.CompositeEditorDataKey.Companion.COMPOSITE_EDITOR_KEY
 import com.icoder0.groom.ui.renderer.EditorExTableCellEditor
 import com.icoder0.groom.ui.renderer.IconRendererEx
 import com.icoder0.groom.ui.renderer.ObjectRendererEx
@@ -13,7 +12,6 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.wm.ex.ToolWindowEx
@@ -21,9 +19,11 @@ import com.intellij.ui.AnActionButton
 import com.intellij.ui.JBSplitter
 import com.intellij.ui.SearchTextField
 import com.intellij.ui.ToolbarDecorator
+import com.intellij.ui.dsl.builder.Align
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.layout.panel
 import com.intellij.ui.table.TableView
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.JBUI.Panels.simplePanel
 import com.intellij.util.ui.ListTableModel
@@ -34,7 +34,6 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.tuple.MutablePair
 import org.apache.commons.lang3.tuple.MutableTriple
 import org.apache.commons.lang3.tuple.Triple
-import org.jetbrains.annotations.NotNull
 import java.awt.event.KeyEvent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -148,7 +147,7 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
         }
         IdeUtils.notify(
             (
-                    if (wsClientAddress?.length ?: -1 > 20) wsClientAddress?.substring(0, 20) + "{...}"
+                    if ((wsClientAddress?.length ?: -1) > 20) wsClientAddress?.substring(0, 20) + "{...}"
                     else wsClientAddress) + " is Connected", MessageType.INFO
         )
     }
@@ -171,7 +170,7 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
     }
 
     fun firePayloadFilter(type: Int?, candidate: String?) {
-        wsPayloadTableView.rowSorter?.castSafelyTo<TableRowSorter<ListTableModel<Triple<String, Int, LocalDateTime>>>>()!!.rowFilter =
+        wsPayloadTableView.rowSorter?.asSafely<TableRowSorter<ListTableModel<Triple<String, Int, LocalDateTime>>>>()!!.rowFilter =
             object : RowFilter<ListTableModel<Triple<String, Int, LocalDateTime>>, Int>() {
                 override fun include(entry: Entry<out ListTableModel<Triple<String, Int, LocalDateTime>>, out Int>?): Boolean {
                     if (type != null) {
@@ -256,9 +255,9 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
 
     /**
      * websocket payload tableview
-     * @param string 文本内容
-     * @param int   0:inbound,1:outbound
-     * @param localDateTime 日期
+     * Triple key1: string 文本内容
+     * Triple key2: int 0:inbound,1:outbound
+     * Triple key3: localDateTime
      */
     var wsPayloadTableView = object : TableView<Triple<String, Int, LocalDateTime>>(
         ListTableModel(
@@ -280,6 +279,7 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
         }
     }
 
+    @Suppress("DialogTitleCapitalization")
     private var tableViewPanel = with(wsPayloadTableView) {
         ToolbarDecorator.createDecorator(this).setAddAction {
             val inputPair = Messages.showInputDialogWithCheckBox(
@@ -318,7 +318,7 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
             }
         }
 
-        override fun getRenderer(item: Triple<String?, Int?, LocalDateTime?>?): TableCellRenderer? {
+        override fun getRenderer(item: Triple<String?, Int?, LocalDateTime?>?): TableCellRenderer {
             return renderer
         }
 
@@ -335,7 +335,7 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
 
         val renderer = TextFieldTableCellRenderer()
 
-        override fun getEditor(item: MutableTriple<String?, Int?, LocalDateTime?>?): TableCellEditor? {
+        override fun getEditor(item: MutableTriple<String?, Int?, LocalDateTime?>?): TableCellEditor {
             return editor
         }
 
@@ -343,7 +343,7 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
             return true
         }
 
-        override fun getRenderer(item: MutableTriple<String?, Int?, LocalDateTime?>?): TableCellRenderer? {
+        override fun getRenderer(item: MutableTriple<String?, Int?, LocalDateTime?>?): TableCellRenderer {
             return renderer
         }
 
@@ -369,11 +369,11 @@ class WebsocketClientView(project: Project, toolWindow: ToolWindowEx) : GroomToo
             return table.getFontMetrics(table.font).stringWidth(" 00:00:00 ")
         }
 
-        override fun getColumnClass(): Class<*>? {
+        override fun getColumnClass(): Class<*> {
             return Icon::class.java
         }
 
-        override fun getRenderer(item: Triple<String?, Int?, LocalDateTime?>?): TableCellRenderer? {
+        override fun getRenderer(item: Triple<String?, Int?, LocalDateTime?>?): TableCellRenderer {
             return renderer
         }
 

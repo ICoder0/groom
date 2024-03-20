@@ -2,20 +2,7 @@
     <id>com.icoder0.groom</id>
     <name>Groom</name>
     <vendor email="bofa1exx@gmail.com" url="">Icoder</vendor>
-
     <depends>com.intellij.modules.platform</depends>
-
-    <!--    Leave this in here so the IDE gives you feedback on-->
-    <!--    What APIs are available-->
-    <idea-version since-build="182.5262.2"/>
-
-    <description><![CDATA[
-        Toolbox for coder
-        <ul>
-          <li>json/xml/html/plain editor which actions include (expand/escape/compress/encode/decode/etc)</li>
-          <li>webSocket client which is support store conf and read/write packet easily</li>
-        </ul>
-    ]]></description>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="com.icoder0.groom.component.WebsocketSettingsManager"/>
@@ -149,7 +136,8 @@
     <change-notes>
         <![CDATA[
       <ul>
-        <li><b>1.1.0</b> upgrade ide version 2021.2.3 in compatibility </li>
+        <li><b>1.2.0</b> ide compatibility util 2024.1.eap</li>
+        <li><b>1.1.0</b> ide compatibility util 2021.2.3</li>
         <li><b>1.0.6</b>
             <ul>
                 <li>fix using balloon popup to replace deprecated notification-api since 203.8084.24(2020.3.4).</li>

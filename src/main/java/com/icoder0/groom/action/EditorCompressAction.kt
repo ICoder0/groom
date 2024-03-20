@@ -1,5 +1,6 @@
 package com.icoder0.groom.action
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -11,6 +12,10 @@ import org.apache.commons.lang3.StringUtils
  * @since 2021/3/13
  */
 class EditorCompressAction : AnAction() {
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
+
     /**
      * Replaces the run of text selected by the primary caret with a fixed string.
      *

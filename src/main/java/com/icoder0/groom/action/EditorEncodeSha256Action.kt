@@ -1,25 +1,15 @@
 package com.icoder0.groom.action
 
+import com.icoder0.groom.dialog.CharsetsComboBoxUpperDialog
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.ui.ComboBox
-import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.JBColor
-import com.intellij.ui.layout.PropertyBinding
-import com.intellij.ui.layout.applyToComponent
-import com.intellij.ui.layout.panel
-import com.intellij.ui.layout.withSelectedBinding
-import com.intellij.util.castSafelyTo
 import org.apache.commons.lang.StringUtils
 import org.bouncycastle.util.encoders.Hex
 import java.nio.charset.Charset
 import java.security.MessageDigest
-import javax.swing.JComponent
-import javax.swing.JTextField
-import javax.swing.event.DocumentEvent
 
 
 /**
@@ -27,6 +17,10 @@ import javax.swing.event.DocumentEvent
  * @since 2021/3/13
  */
 class EditorEncodeSha256Action : AnAction() {
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
+
     /**
      * Replaces the run of text selected by the primary caret with a fixed string.
      *
@@ -45,7 +39,7 @@ class EditorEncodeSha256Action : AnAction() {
         // Replace the selection with a fixed string.
         // Must do this document change in a write action context.
 
-        val dialog = EncodeSha256Dialog()
+        val dialog = CharsetsComboBoxUpperDialog("Encode Sha256 Options")
         var replace = editor.selectionModel.selectedText!!
         if (dialog.showAndGet()) {
             val charset = Charset.forName(dialog.getCharset())
@@ -55,9 +49,12 @@ class EditorEncodeSha256Action : AnAction() {
             }
         }
 
-        WriteCommandAction.runWriteCommandAction(project) {
-            document.replaceString(start, end, replace)
+        if (dialog.isOK) {
+            WriteCommandAction.runWriteCommandAction(project) {
+                document.replaceString(start, end, "\"" + replace + "\"")
+            }
         }
+
         // De-select the text range that was just replaced
         primaryCaret.removeSelection()
     }
@@ -78,53 +75,5 @@ class EditorEncodeSha256Action : AnAction() {
         val editor = e.getData(CommonDataKeys.EDITOR)
         // Set visibility and enable only in case of existing project and editor and if a selection exists
         e.presentation.isEnabledAndVisible = project != null && editor != null && editor.selectionModel.hasSelection()
-    }
-
-
-    class EncodeSha256Dialog : DialogWrapper(true) {
-        var isUpper = true
-
-        fun getCharset(): String {
-            return charsetComboBox.editor.editorComponent.castSafelyTo<JTextField>()!!.text.trim()
-        }
-
-        val charsetComboBox = ComboBox(arrayOf("UTF-8", "ASCII", "CP1256", "ISO-8859-1", "ISO-8859-2", "ISO-8859-6", "ISO-8859-15", "Windows-1252")).apply {
-            isOpaque = true
-            isEditable = true
-            selectedItem = "UTF-8"
-            val default = foreground
-            val textField = editor.editorComponent.castSafelyTo<JTextField>()
-            textField!!.document.addDocumentListener(object : DocumentAdapter() {
-                override fun textChanged(e: DocumentEvent) {
-                    try {
-                        Charset.forName(textField.text.trim())
-                        textField.foreground = default
-                    } catch (e: Exception) {
-                        textField.foreground = JBColor.RED
-                    }
-                }
-            })
-        }
-
-        override fun createCenterPanel(): JComponent? {
-            return panel {
-                row("Choose charset") {
-                    charsetComboBox()
-                }
-                row {
-                    radioButton("Upper/Lower").withSelectedBinding(
-                            PropertyBinding({ isUpper }, { isUpper = it })
-                    ).applyToComponent {
-                        isSelected = true
-                    }
-                }
-            }
-        }
-
-        init {
-            init()
-            title = "Encode Sha256 Options"
-        }
-
     }
 }

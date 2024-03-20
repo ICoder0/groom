@@ -5,6 +5,7 @@ import com.icoder0.groom.ui.WebsocketClientView
 import com.intellij.execution.runners.ExecutionUtil
 import com.intellij.icons.AllIcons
 import com.intellij.ide.util.ElementsChooser
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -15,6 +16,9 @@ import java.util.function.UnaryOperator
  * @since  2021/5/5
  */
 class WebsocketPanelViewFilterAction : DumbAwareAction() {
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
 
     companion object FilterObjectKind {
         const val TABLE_VIEW = "Table View"
